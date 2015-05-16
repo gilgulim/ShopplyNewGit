@@ -1,11 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">ShopplyNewApp</string>
+    <string name="app_name">Shopply</string>
     <string name="hello_world">Hello world!</string>
-    <string name="action_settings">Settings</string>
+    <string name="action_about">About us</string>
     <string name="title_activity_splash">Splash</string>
     <string name="title_activity_login">Login</string>
-    <string name="SkipBtn">Skip</string>
+    <string name="SkipBtn">anonymous login</string>
+    <string name="menuIcon">menu</string>
+    <string name="title_activity_home">Home</string>
+    <string name="action_settings">Settings</string>
 
 </resources>

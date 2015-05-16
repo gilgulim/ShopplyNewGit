@@ -1,22 +1,38 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@drawable/app_pg">
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/app_pg">
 
     <ImageView
         android:layout_width="wrap_content"
-        android:layout_height="fill_parent"
+        android:layout_height="110dp"
         android:src="@drawable/logo_black"
         android:layout_gravity="center_horizontal"
-        />
-
-    <Button
+        android:id="@+id/imageView"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="140dp" />
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:src="@drawable/fb_login"
+        android:layout_gravity="center_horizontal"
+        android:id="@+id/imageView2"
+        android:layout_below="@+id/imageView"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="60dp" />
+    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="@string/SkipBtn"
-        android:id="@+id/button"
-        android:layout_gravity="right" />
+        android:id="@+id/skipTextView"
+        android:layout_marginTop="40dp"
+        android:layout_below="@+id/imageView2"
+        android:layout_centerHorizontal="true" />
+
+</RelativeLayout>
 
 
-</LinearLayout>
+
