@@ -50,13 +50,9 @@
         <activity
             android:name=".ShoppingListCardView"
             android:label="@string/title_activity_shopping_list_card_view"
+            android:theme="@style/MyActionBar"
             android:screenOrientation="portrait" >
         </activity>
 
-        <activity
-            android:name=".Home"
-            android:label="@string/title_activity_home"
-            android:screenOrientation="portrait" >
-        </activity>
     </application>
 </manifest>

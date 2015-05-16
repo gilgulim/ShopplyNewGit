@@ -6,4 +6,6 @@
         <item name="android:windowFullscreen">true</item>
     </style>
 
+    <style name="MyActionBar" parent="Theme.AppCompat.Light.DarkActionBar">
+    </style>
 </resources>
