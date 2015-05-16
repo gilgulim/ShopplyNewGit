@@ -17,7 +17,7 @@ public class Login extends Activity {
         skipTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent mainIntent = new Intent(Login.this, MainActivity.class);
+                Intent mainIntent = new Intent(Login.this, ShoppingListCardView.class);
                 Login.this.startActivity(mainIntent);
                 Login.this.finish();
             }

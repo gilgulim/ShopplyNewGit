@@ -2,6 +2,7 @@ package com.example.shopply.shopplynewapp;
 
 
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.support.v7.app.ActionBarActivity;
@@ -13,16 +14,19 @@ import com.parse.ParseUser;
 import com.parse.SignUpCallback;
 
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        //setSupportActionBar(toolbar);
 
+
+
+
+
+//PARSE CODE
         Parse.enableLocalDatastore(this);
         Parse.initialize(this, "E8FFzEd5jte9M3G6gkyNCUWMqXMGfWAScQwQDwsb", "5k4kUjotQY2qffgg3R8sublHlAVkWlkFWwujNU1I");
 

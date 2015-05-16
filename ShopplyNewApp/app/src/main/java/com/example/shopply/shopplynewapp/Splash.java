@@ -16,7 +16,7 @@ public class Splash extends Activity {
     private final int SPLASH_DISPLAY_LENGTH;
 
     {
-        SPLASH_DISPLAY_LENGTH = 2500;
+        SPLASH_DISPLAY_LENGTH = 2000;
     }
 
     /** Called when the activity is first created. */

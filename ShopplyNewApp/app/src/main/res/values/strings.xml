@@ -10,5 +10,6 @@
     <string name="menuIcon">menu</string>
     <string name="title_activity_home">Home</string>
     <string name="action_settings">Settings</string>
+    <string name="title_activity_shopping_list_card_view">ShoppingListCardView</string>
 
 </resources>
