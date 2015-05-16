@@ -1,5 +1,7 @@
 package com.example.shopply.shopplynewapp;
 
+
+import android.content.res.Resources;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -13,22 +15,24 @@ import java.util.ArrayList;
 /**
  * Created by Gilp on 16/05/2015.
  */
-public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAdapter.DataObjectHolder> {
-    private static String LOG_TAG = "MyRecyclerViewAdapter";
-    private ArrayList<DataObjectList> mDataset;
+public class MyRecyclerViewItemListAdapter extends RecyclerView.Adapter<MyRecyclerViewItemListAdapter.DataObjectHolder> {
+    private static String LOG_TAG = "MyRecyclerViewItemListAdapter";
+    private ArrayList<DataObjectItem> mDataset;
     private static MyClickListener myClickListener;
 
     public static class DataObjectHolder extends RecyclerView.ViewHolder
             implements View
             .OnClickListener {
-        ImageView cardBG;
-        TextView label;
+        ImageView itemBG;
+        TextView itemName;
+        TextView itemAmount;
 
 
         public DataObjectHolder(View itemView) {
             super(itemView);
-            label = (TextView) itemView.findViewById(R.id.ShoppingListCardTitle);
-            cardBG = (ImageView) itemView.findViewById(R.id.ShoppingListCardBG);
+            itemName = (TextView) itemView.findViewById(R.id.ItemListName);
+            itemAmount = (TextView) itemView.findViewById(R.id.ItemListAmount);
+            itemBG = (ImageView) itemView.findViewById(R.id.ItemListImage);
             Log.i(LOG_TAG, "Adding Listener");
             itemView.setOnClickListener(this);
         }
@@ -43,7 +47,7 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
         this.myClickListener = myClickListener;
     }
 
-    public MyRecyclerViewAdapter(ArrayList<DataObjectList> myDataset) {
+    public MyRecyclerViewItemListAdapter(ArrayList<DataObjectItem> myDataset) {
         mDataset = myDataset;
     }
 
@@ -51,7 +55,7 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
     public DataObjectHolder onCreateViewHolder(ViewGroup parent,
                                                int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.card_view_row, parent, false);
+                .inflate(R.layout.card_view_item_list_row, parent, false);
 
         DataObjectHolder dataObjectHolder = new DataObjectHolder(view);
         return dataObjectHolder;
@@ -59,19 +63,28 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
 
     @Override
     public void onBindViewHolder(DataObjectHolder holder, int position) {
-        holder.label.setText(mDataset.get(position).getmText1());
+        holder.itemName.setText(mDataset.get(position).getmItemName());
+
+        String itemType;
+        if(mDataset.get(position).getmItemType()==0){
+            itemType = "QTY";
+        } else{
+            itemType = "KG";
+        }
+        holder.itemAmount.setText(String.format("%d %s", mDataset.get(position).getmItemAmount(), itemType));
+
 
         //support API 15 (Jellybean)
         int sdk = android.os.Build.VERSION.SDK_INT;
         if(sdk < android.os.Build.VERSION_CODES.JELLY_BEAN) {
-            holder.cardBG.setBackgroundDrawable(mDataset.get(position).getmImageCategory());
+            holder.itemBG.setBackgroundDrawable(mDataset.get(position).getmImageItem());
         } else {
-            holder.cardBG.setBackground(mDataset.get(position).getmImageCategory());
+            holder.itemBG.setBackground(mDataset.get(position).getmImageItem());
         }
 
     }
 
-    public void addItem(DataObjectList dataObj, int index) {
+    public void addItem(DataObjectItem dataObj, int index) {
         mDataset.add(index, dataObj);
         notifyItemInserted(index);
     }

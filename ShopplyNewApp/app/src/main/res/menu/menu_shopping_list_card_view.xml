@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.example.shopply.shopplynewapp.ShoppingListCardView">
     <item android:id="@+id/addShoppingList" android:title="@string/action_addList"
+        android:icon="@drawable/ic_action_new"
         android:orderInCategory="100" app:showAsAction="always" />
 
 </menu>

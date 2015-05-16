@@ -6,11 +6,11 @@ import android.media.Image;
 /**
  * Created by Gilp on 16/05/2015.
  */
-public class DataObjectList {
+public class DataObjectShoppingList {
     private Drawable mImageCategory;
     private String mText1;
 
-    DataObjectList (String text1, Drawable imageCategory){
+    DataObjectShoppingList(String text1, Drawable imageCategory){
         mText1 = text1;
         mImageCategory = imageCategory;
     }
