@@ -13,7 +13,7 @@ public class DataObjectItem {
     private int mItemAmount;
     private int mItemType; //0 = QTY, 1 = KG
 
-    DataObjectItem(String itemName, Drawable imageItem, int amount, int itemType){
+    public DataObjectItem(String itemName, Drawable imageItem, int amount, int itemType){
         mImageItem = imageItem;
         mItemAmount = amount;
         mItemName = itemName;
