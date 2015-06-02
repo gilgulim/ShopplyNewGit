@@ -10,7 +10,7 @@ public class DataObjectShoppingList {
     private Drawable mImageCategory;
     private String mText1;
 
-    DataObjectShoppingList(String text1, Drawable imageCategory){
+    public DataObjectShoppingList(String text1, Drawable imageCategory){
         mText1 = text1;
         mImageCategory = imageCategory;
     }
