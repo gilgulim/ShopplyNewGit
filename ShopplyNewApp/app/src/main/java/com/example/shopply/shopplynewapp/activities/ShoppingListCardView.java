@@ -14,11 +14,13 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.shopply.shopplynewapp.DataObjectShoppingList;
 import com.example.shopply.shopplynewapp.R;
 import com.example.shopply.shopplynewapp.adapters.MyRecyclerViewShoppingListAdapter;
 import com.facebook.appevents.AppEventsLogger;
+import com.parse.ParseUser;
 
 import java.util.ArrayList;
 
@@ -57,6 +59,8 @@ public class ShoppingListCardView extends ActionBarActivity {
                 //ShoppingListCardView.this.finish();
             }
         });
+
+        Toast.makeText(getApplicationContext(), ParseUser.getCurrentUser().getUsername(),Toast.LENGTH_LONG).show();
     }
 
 
