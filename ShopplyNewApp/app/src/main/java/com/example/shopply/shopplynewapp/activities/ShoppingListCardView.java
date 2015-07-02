@@ -14,20 +14,19 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.shopply.shopplynewapp.DataObjectShoppingList;
 import com.example.shopply.shopplynewapp.R;
+import com.example.shopply.shopplynewapp.adapters.IShoppingListButtonsListener;
 import com.example.shopply.shopplynewapp.adapters.MyRecyclerViewShoppingListAdapter;
 import com.facebook.appevents.AppEventsLogger;
-import com.parse.ParseUser;
 
 import java.util.ArrayList;
 
 
-public class ShoppingListCardView extends ActionBarActivity {
+public class ShoppingListCardView extends ActionBarActivity implements IShoppingListButtonsListener {
     private RecyclerView mRecyclerView;
-    private RecyclerView.Adapter mAdapter;
+    private MyRecyclerViewShoppingListAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
     private static String LOG_TAG = "ShoppingListCardViewActivity";
     private ArrayList results = new ArrayList<DataObjectShoppingList>();
@@ -44,23 +43,9 @@ public class ShoppingListCardView extends ActionBarActivity {
         mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLayoutManager);
         mAdapter = new MyRecyclerViewShoppingListAdapter(getDataSet());
+        mAdapter.setShoppingListItemButtonsListener(this);
         mRecyclerView.setAdapter(mAdapter);
 
-        // Code to remove an item with default animation
-        //((MyRecyclerViewShoppingListAdapter) mAdapter).deleteItem(index);
-
-
-        TextView itemsList = (TextView)findViewById(R.id.goToItemList);
-        itemsList.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent mainIntent = new Intent(ShoppingListCardView.this, ItemListCardView.class);
-                ShoppingListCardView.this.startActivity(mainIntent);
-                //ShoppingListCardView.this.finish();
-            }
-        });
-
-        Toast.makeText(getApplicationContext(), ParseUser.getCurrentUser().getUsername(),Toast.LENGTH_LONG).show();
     }
 
 
@@ -91,12 +76,6 @@ public class ShoppingListCardView extends ActionBarActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        ((MyRecyclerViewShoppingListAdapter) mAdapter).setOnItemClickListener(new MyRecyclerViewShoppingListAdapter.MyClickListener() {
-            @Override
-            public void onItemClick(int position, View v) {
-                Log.i(LOG_TAG, " Clicked on Item " + position);
-            }
-        });
 
         // Logs 'install' and 'app activate' App Events.
         AppEventsLogger.activateApp(this);
@@ -132,5 +111,27 @@ public class ShoppingListCardView extends ActionBarActivity {
 
         // Logs 'app deactivate' App Event.
         AppEventsLogger.deactivateApp(this);
+    }
+
+    @Override
+    public void onShoppingListButtonClicked(ShoppingListButtonType buttonType, int position) {
+
+        switch (buttonType){
+            case BTN_DISCARD:
+                mAdapter.deleteItem(position);
+                Log.i("Non", "BTN_DISCARD " + position);
+                break;
+            case BTN_EDIT:
+                Intent mainIntent = new Intent(ShoppingListCardView.this, ItemListCardView.class);
+                ShoppingListCardView.this.startActivity(mainIntent);
+                Log.i("Non", "BTN_EDIT " + position);
+                break;
+            case BTN_SHARE:
+                Log.i("Non", "BTN_SHARE " + position);
+                break;
+            case BTN_ITEM_SELECTED:
+                Log.i("Non", "BTN_ITEM_SELECTED " + position);
+                break;
+        }
     }
 }
