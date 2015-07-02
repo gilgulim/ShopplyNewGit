@@ -13,17 +13,8 @@ import com.parse.ParseFacebookUtils;
 
 
 public class Splash extends Activity {
+    private final int SPLASH_DISPLAY_LENGTH = 2000;
 
-    /**
-     * Duration of wait *
-     */
-    private final int SPLASH_DISPLAY_LENGTH;
-
-    {
-        SPLASH_DISPLAY_LENGTH = 2000;
-    }
-
-    /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
@@ -43,7 +34,7 @@ public class Splash extends Activity {
                 /* Create an Intent that will start the Menu-Activity. */
                 Intent loginIntent = new Intent(Splash.this,Login.class);
                 Splash.this.startActivity(loginIntent);
-                Splash.this.finish();
+                //Splash.this.finish();
             }
         }, SPLASH_DISPLAY_LENGTH);
 
@@ -67,6 +58,8 @@ public class Splash extends Activity {
 //            Log.e("exception", e.toString());
 //        }
     }
+
+
 
     @Override
     public void onResume() {

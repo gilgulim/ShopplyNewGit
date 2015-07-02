@@ -14,20 +14,29 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.shopply.shopplynewapp.DataObjectShoppingList;
 import com.example.shopply.shopplynewapp.R;
 import com.example.shopply.shopplynewapp.adapters.MyRecyclerViewShoppingListAdapter;
 import com.facebook.appevents.AppEventsLogger;
+import com.parse.FindCallback;
+import com.parse.GetCallback;
+import com.parse.ParseException;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
+import com.parse.ParseUser;
+import com.parse.SaveCallback;
 
 import java.util.ArrayList;
+import java.util.List;
 
 
 public class ShoppingListCardView extends ActionBarActivity {
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
-    private static String LOG_TAG = "ShoppingListCardViewActivity";
+    private static final String  TAG = " > > > ShoppingList:";
     private ArrayList results = new ArrayList<DataObjectShoppingList>();
     private int itemIndex = 0;
     @Override
@@ -57,6 +66,8 @@ public class ShoppingListCardView extends ActionBarActivity {
                 //ShoppingListCardView.this.finish();
             }
         });
+
+        Toast.makeText(getApplicationContext(), ParseUser.getCurrentUser().getUsername(),Toast.LENGTH_LONG).show();
     }
 
 
@@ -90,7 +101,6 @@ public class ShoppingListCardView extends ActionBarActivity {
         ((MyRecyclerViewShoppingListAdapter) mAdapter).setOnItemClickListener(new MyRecyclerViewShoppingListAdapter.MyClickListener() {
             @Override
             public void onItemClick(int position, View v) {
-                Log.i(LOG_TAG, " Clicked on Item " + position);
             }
         });
 
@@ -99,16 +109,60 @@ public class ShoppingListCardView extends ActionBarActivity {
     }
 
     private ArrayList<DataObjectShoppingList> getDataSet() {
-
-        Drawable img1,img2;
+        Drawable img1;
         Resources res = getResources();
         img1 = res.getDrawable(R.drawable.list_bg_supermarket);
-        img2 = res.getDrawable(R.drawable.list_bg_pharmacy);
-        DataObjectShoppingList objSuperMarket = new DataObjectShoppingList("Supermarket", img1 );
-        DataObjectShoppingList objPharmacy = new DataObjectShoppingList("Pharmacy", img2 );
-        results.add(itemIndex++,objSuperMarket);
-        results.add(itemIndex++,objPharmacy);
+
+        ParseQuery<ParseObject> query = ParseQuery.getQuery("usersListsRelationships");
+        query.whereEqualTo("userID", ParseUser.getCurrentUser().getObjectId());
+        query.findInBackground(new FindCallback<ParseObject>() {
+            @Override
+            public void done(List<ParseObject> list, ParseException e) {
+                final Drawable img1;
+                Resources res = getResources();
+                img1 = res.getDrawable(R.drawable.list_bg_supermarket);
+
+                if (e == null){
+                    if (list.size() > 0 ){
+                        for(ParseObject object : list){
+                            String listID = (String) object.get("listID");
+                            ParseQuery<ParseObject> listQuery = ParseQuery.getQuery("ShoppingLists");
+                            listQuery.whereEqualTo("shoppingListIsDeleted", false);
+                            listQuery.whereEqualTo("objectID", listID);
+                            listQuery.findInBackground(new FindCallback<ParseObject>() {
+                                @Override
+                                public void done(List<ParseObject> list, ParseException e) {
+                                    if (e == null){
+                                        if (list.size() > 0){
+                                            ParseObject shoppingListObject = list.get(0);
+                                            String shoppingListName = (String) shoppingListObject.get("shoppingListName");
+                                            DataObjectShoppingList shoppingListItem = new DataObjectShoppingList(shoppingListName, img1 );
+                                            results.add(itemIndex++, shoppingListItem);
+                                        }
+                                    } else {
+                                        Log.i(TAG, "query: find shopping lists details :: Error: " + e.getMessage());
+                                    }
+                                }
+                            });
+                        }
+                    }
+                } else {
+                    Log.i(TAG, "query: find user shopping lists :: Error: " + e.getMessage());
+                }
+            }
+        });
+
         return results;
+
+//        Drawable img2;
+//        Resources res = getResources();
+//        img1 = res.getDrawable(R.drawable.list_bg_supermarket);
+//        img2 = res.getDrawable(R.drawable.list_bg_pharmacy);
+//        DataObjectShoppingList objSuperMarket = new DataObjectShoppingList("Supermarket", img1 );
+//        DataObjectShoppingList objPharmacy = new DataObjectShoppingList("Pharmacy", img2 );
+//        results.add(itemIndex++,objSuperMarket);
+//        results.add(itemIndex++,objPharmacy);
+
     }
 
     private void addNewShoppingList() {
@@ -116,10 +170,35 @@ public class ShoppingListCardView extends ActionBarActivity {
         Resources res = getResources();
         img1 = res.getDrawable(R.drawable.list_bg_supermarket);
         img2 = res.getDrawable(R.drawable.list_bg_pharmacy);
-        DataObjectShoppingList objSuperMarket = new DataObjectShoppingList("Supermarket", img1 );
-        DataObjectShoppingList objPharmacy = new DataObjectShoppingList("Pharmacy", img2 );
+        final DataObjectShoppingList objSuperMarket = new DataObjectShoppingList("Supermarket", img1 );
 
-        ((MyRecyclerViewShoppingListAdapter)mAdapter).addItem(objSuperMarket,itemIndex++);
+        final ParseObject shoppingList = new ParseObject("n_shoppingLists");
+        shoppingList.put("shoppingListName", "myList" + itemIndex);
+        shoppingList.put("shoppingListIsDeleted", false);
+        shoppingList.saveInBackground(new SaveCallback() {
+            @Override
+            public void done(ParseException e) {
+                if (e == null) {
+                    ParseObject userShoppingListRelationship = new ParseObject("n_usersListsRelationships");
+                    userShoppingListRelationship.put("listID", ParseObject.createWithoutData("shoppingLists", shoppingList.getObjectId()));
+                    userShoppingListRelationship.put("userID", ParseObject.createWithoutData("User", ParseUser.getCurrentUser().getObjectId()));
+                    userShoppingListRelationship.saveInBackground(new SaveCallback() {
+                        @Override
+                        public void done(ParseException e) {
+                            if (e == null) {
+                                ((MyRecyclerViewShoppingListAdapter) mAdapter).addItem(objSuperMarket, itemIndex++);
+                            } else {
+                                Log.i(TAG, "save to usersShoppingListRelationship failed, error = " + e.getMessage());
+                            }
+                        }
+                    });
+
+
+                } else {
+                    Log.i(TAG, "save to ShoppingList failed, error = " + e.getMessage());
+                }
+            }
+        });
     }
 
     @Override
