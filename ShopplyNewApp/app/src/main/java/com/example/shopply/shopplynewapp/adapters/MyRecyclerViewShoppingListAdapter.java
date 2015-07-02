@@ -1,8 +1,5 @@
 package com.example.shopply.shopplynewapp.adapters;
 
-import android.annotation.TargetApi;
-import android.content.Intent;
-import android.os.Build;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -13,46 +10,72 @@ import android.widget.TextView;
 
 import com.example.shopply.shopplynewapp.DataObjectShoppingList;
 import com.example.shopply.shopplynewapp.R;
-import com.example.shopply.shopplynewapp.activities.ItemListCardView;
-import com.example.shopply.shopplynewapp.activities.ShoppingListCardView;
 
 import java.util.ArrayList;
 
 /**
  * Created by Gilp on 16/05/2015.
  */
-
-
-public class MyRecyclerViewShoppingListAdapter extends RecyclerView.Adapter<ShoppingListDataObjectHolder>
-        implements IShoppingListButtonsListener
-{
+public class MyRecyclerViewShoppingListAdapter extends RecyclerView.Adapter<MyRecyclerViewShoppingListAdapter.DataObjectHolder> {
     private static String LOG_TAG = "MyRecyclerViewShoppingListAdapter";
     private ArrayList<DataObjectShoppingList> mDataset;
-    private IShoppingListButtonsListener mShoppingListItemButtonsListener;
+    private static MyClickListener myClickListener;
+
+    public static class DataObjectHolder extends RecyclerView.ViewHolder
+            implements View
+            .OnClickListener {
+        ImageView cardBG;
+        TextView label;
+
+
+        public DataObjectHolder(View itemView) {
+            super(itemView);
+            label = (TextView) itemView.findViewById(R.id.ShoppingListCardTitle);
+            cardBG = (ImageView) itemView.findViewById(R.id.ShoppingListCardBG);
+            Log.i(LOG_TAG, "Adding Listener");
+            itemView.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View v) {
+            myClickListener.onItemClick(getPosition(), v);
+        }
+    }
+
+    public void setOnItemClickListener(MyClickListener myClickListener) {
+        this.myClickListener = myClickListener;
+    }
 
     public MyRecyclerViewShoppingListAdapter(ArrayList<DataObjectShoppingList> myDataset) {
         mDataset = myDataset;
     }
 
     @Override
-    public ShoppingListDataObjectHolder onCreateViewHolder(ViewGroup parent,
+    public DataObjectHolder onCreateViewHolder(ViewGroup parent,
                                                int viewType) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.card_view_shopping_list_row, parent, false);
 
-        ShoppingListDataObjectHolder dataObjectHolder = new ShoppingListDataObjectHolder(view);
-        dataObjectHolder.setButtonsListener(this);
+        DataObjectHolder dataObjectHolder = new DataObjectHolder(view);
         return dataObjectHolder;
     }
 
     @Override
-    public void onBindViewHolder(ShoppingListDataObjectHolder holder, final int position) {
-        holder.setShoppingListTitle(mDataset.get(position).getmText1());
-        holder.setShoppingListImage(mDataset.get(position).getmImageCategory());
+    public void onBindViewHolder(DataObjectHolder holder, int position) {
+        holder.label.setText(mDataset.get(position).getmText1());
+
+        //support API 15 (Jellybean)
+        int sdk = android.os.Build.VERSION.SDK_INT;
+        if(sdk < android.os.Build.VERSION_CODES.JELLY_BEAN) {
+            holder.cardBG.setBackgroundDrawable(mDataset.get(position).getmImageCategory());
+        } else {
+            holder.cardBG.setBackground(mDataset.get(position).getmImageCategory());
+        }
+
     }
 
     public void addItem(DataObjectShoppingList dataObj, int index) {
-        mDataset.add(dataObj);
+        mDataset.add(index, dataObj);
         notifyItemInserted(index);
     }
 
@@ -61,20 +84,12 @@ public class MyRecyclerViewShoppingListAdapter extends RecyclerView.Adapter<Shop
         notifyItemRemoved(index);
     }
 
-    public void setShoppingListItemButtonsListener(IShoppingListButtonsListener shoppingListItemButtonsListener){
-        mShoppingListItemButtonsListener = shoppingListItemButtonsListener;
-    }
-
     @Override
     public int getItemCount() {
         return mDataset.size();
     }
 
-
-    @Override
-    public void onShoppingListButtonClicked(ShoppingListButtonType buttonType, int position) {
-        if(mShoppingListItemButtonsListener!=null){
-            mShoppingListItemButtonsListener.onShoppingListButtonClicked(buttonType, position);
-        }
+    public interface MyClickListener {
+        public void onItemClick(int position, View v);
     }
 }
