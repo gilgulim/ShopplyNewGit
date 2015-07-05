@@ -22,9 +22,11 @@ import com.example.shopply.shopplynewapp.adapters.MyRecyclerViewShoppingListAdap
 import com.facebook.appevents.AppEventsLogger;
 import com.parse.FindCallback;
 import com.parse.GetCallback;
+import com.parse.Parse;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
+import com.parse.ParseRelation;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
@@ -66,8 +68,6 @@ public class ShoppingListCardView extends ActionBarActivity {
                 //ShoppingListCardView.this.finish();
             }
         });
-
-        Toast.makeText(getApplicationContext(), ParseUser.getCurrentUser().getUsername(),Toast.LENGTH_LONG).show();
     }
 
 
@@ -109,60 +109,44 @@ public class ShoppingListCardView extends ActionBarActivity {
     }
 
     private ArrayList<DataObjectShoppingList> getDataSet() {
-        Drawable img1;
+        Log.i(TAG, "results before: " + results.size());
+        final Drawable img1;
         Resources res = getResources();
         img1 = res.getDrawable(R.drawable.list_bg_supermarket);
 
-        ParseQuery<ParseObject> query = ParseQuery.getQuery("usersListsRelationships");
-        query.whereEqualTo("userID", ParseUser.getCurrentUser().getObjectId());
-        query.findInBackground(new FindCallback<ParseObject>() {
-            @Override
-            public void done(List<ParseObject> list, ParseException e) {
-                final Drawable img1;
-                Resources res = getResources();
-                img1 = res.getDrawable(R.drawable.list_bg_supermarket);
+        ParseQuery<ParseObject> query = new ParseQuery("n_usersListsRelationships");
+        query.whereEqualTo("userID", ParseUser.getCurrentUser());
+        query.include("listID");
+        try {
+            List<ParseObject> listOfRelationships = query.find();
+            if (listOfRelationships.size() > 0){
+                for (ParseObject listObject : listOfRelationships) {
 
-                if (e == null){
-                    if (list.size() > 0 ){
-                        for(ParseObject object : list){
-                            String listID = (String) object.get("listID");
-                            ParseQuery<ParseObject> listQuery = ParseQuery.getQuery("ShoppingLists");
-                            listQuery.whereEqualTo("shoppingListIsDeleted", false);
-                            listQuery.whereEqualTo("objectID", listID);
-                            listQuery.findInBackground(new FindCallback<ParseObject>() {
-                                @Override
-                                public void done(List<ParseObject> list, ParseException e) {
-                                    if (e == null){
-                                        if (list.size() > 0){
-                                            ParseObject shoppingListObject = list.get(0);
-                                            String shoppingListName = (String) shoppingListObject.get("shoppingListName");
-                                            DataObjectShoppingList shoppingListItem = new DataObjectShoppingList(shoppingListName, img1 );
-                                            results.add(itemIndex++, shoppingListItem);
-                                        }
-                                    } else {
-                                        Log.i(TAG, "query: find shopping lists details :: Error: " + e.getMessage());
-                                    }
-                                }
-                            });
+                    ParseObject shoppingListRelationshipObject = (ParseObject) listObject.getParseObject("listID");
+                    Log.i(TAG, "object ID = " + listObject.getObjectId() + ", listID = " + shoppingListRelationshipObject.getObjectId());
+
+                    ParseQuery<ParseObject> listQuery = new ParseQuery("n_shoppingLists");
+                    listQuery.whereEqualTo("objectId", shoppingListRelationshipObject.getObjectId());
+                    listQuery.whereEqualTo("shoppingListIsDeleted", false);
+                    try {
+                        List<ParseObject> listOfShoppingLists = listQuery.find();
+
+
+                        if (listOfShoppingLists.size() > 0) {
+                            Log.i(TAG, "Parse Object = " + listOfShoppingLists.get(0).getObjectId() + " - " + listOfShoppingLists.get(0).getString("shoppingListName"));
+                            String shoppingListName = listOfShoppingLists.get(0).getString("shoppingListName");
+                            DataObjectShoppingList shoppingListItem = new DataObjectShoppingList(shoppingListName, img1);
+                            results.add(itemIndex++, shoppingListItem);
                         }
+                    } catch (ParseException e1) {
+                        e1.printStackTrace();
                     }
-                } else {
-                    Log.i(TAG, "query: find user shopping lists :: Error: " + e.getMessage());
                 }
             }
-        });
-
+        } catch (ParseException e) {
+            Log.i(TAG, "query: get usersListsRelationships :: Error: " + e.getMessage());
+        }
         return results;
-
-//        Drawable img2;
-//        Resources res = getResources();
-//        img1 = res.getDrawable(R.drawable.list_bg_supermarket);
-//        img2 = res.getDrawable(R.drawable.list_bg_pharmacy);
-//        DataObjectShoppingList objSuperMarket = new DataObjectShoppingList("Supermarket", img1 );
-//        DataObjectShoppingList objPharmacy = new DataObjectShoppingList("Pharmacy", img2 );
-//        results.add(itemIndex++,objSuperMarket);
-//        results.add(itemIndex++,objPharmacy);
-
     }
 
     private void addNewShoppingList() {
@@ -172,30 +156,20 @@ public class ShoppingListCardView extends ActionBarActivity {
         img2 = res.getDrawable(R.drawable.list_bg_pharmacy);
         final DataObjectShoppingList objSuperMarket = new DataObjectShoppingList("Supermarket", img1 );
 
-        final ParseObject shoppingList = new ParseObject("n_shoppingLists");
-        shoppingList.put("shoppingListName", "myList" + itemIndex);
+        ParseObject shoppingList = new ParseObject("n_shoppingLists");
+        shoppingList.put("shoppingListName", "myList A" + itemIndex);
         shoppingList.put("shoppingListIsDeleted", false);
-        shoppingList.saveInBackground(new SaveCallback() {
+
+        ParseObject userShoppingListRelationship = new ParseObject("n_usersListsRelationships");
+        userShoppingListRelationship.put("listID", shoppingList);
+        userShoppingListRelationship.put("userID", ParseUser.getCurrentUser());
+        userShoppingListRelationship.saveInBackground(new SaveCallback() {
             @Override
             public void done(ParseException e) {
                 if (e == null) {
-                    ParseObject userShoppingListRelationship = new ParseObject("n_usersListsRelationships");
-                    userShoppingListRelationship.put("listID", ParseObject.createWithoutData("shoppingLists", shoppingList.getObjectId()));
-                    userShoppingListRelationship.put("userID", ParseObject.createWithoutData("User", ParseUser.getCurrentUser().getObjectId()));
-                    userShoppingListRelationship.saveInBackground(new SaveCallback() {
-                        @Override
-                        public void done(ParseException e) {
-                            if (e == null) {
-                                ((MyRecyclerViewShoppingListAdapter) mAdapter).addItem(objSuperMarket, itemIndex++);
-                            } else {
-                                Log.i(TAG, "save to usersShoppingListRelationship failed, error = " + e.getMessage());
-                            }
-                        }
-                    });
-
-
+                    ((MyRecyclerViewShoppingListAdapter) mAdapter).addItem(objSuperMarket, itemIndex++);
                 } else {
-                    Log.i(TAG, "save to ShoppingList failed, error = " + e.getMessage());
+                    Log.i(TAG, "save to usersShoppingListRelationship failed, error = " + e.getMessage());
                 }
             }
         });

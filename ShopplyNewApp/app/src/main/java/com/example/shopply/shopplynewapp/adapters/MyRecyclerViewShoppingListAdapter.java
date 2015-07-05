@@ -30,8 +30,8 @@ public class MyRecyclerViewShoppingListAdapter extends RecyclerView.Adapter<MyRe
 
         public DataObjectHolder(View itemView) {
             super(itemView);
-            label = (TextView) itemView.findViewById(R.id.ShoppingListCardTitle);
-            cardBG = (ImageView) itemView.findViewById(R.id.ShoppingListCardBG);
+            label = (TextView) itemView.findViewById(R.id.lbl_shoppingListTitle);
+            cardBG = (ImageView) itemView.findViewById(R.id.imgView_shoppingListBgImage);
             Log.i(LOG_TAG, "Adding Listener");
             itemView.setOnClickListener(this);
         }
