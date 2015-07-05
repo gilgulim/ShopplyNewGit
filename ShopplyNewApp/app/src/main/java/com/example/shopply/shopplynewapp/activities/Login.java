@@ -2,9 +2,14 @@ package com.example.shopply.shopplynewapp.activities;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -21,7 +26,11 @@ import com.parse.ParseException;
 import com.parse.ParseFacebookUtils;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
+import com.squareup.picasso.Picasso;
 
+import java.lang.reflect.Array;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.List;
 
 
@@ -65,7 +74,6 @@ public class Login extends Activity {
                                         //user.setEmail("email@example.com");
                                         user.put("isFacebookUser", true);
                                         user.put("FacebookUserID", Profile.getCurrentProfile().getId());
-
                                         try {
                                             user.signUp();
                                             user.logIn(user.getUsername(),"no password");

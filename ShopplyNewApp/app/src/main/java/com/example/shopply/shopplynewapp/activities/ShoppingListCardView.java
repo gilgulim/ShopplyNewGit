@@ -1,5 +1,7 @@
 package com.example.shopply.shopplynewapp.activities;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.drawable.ColorDrawable;
@@ -9,9 +11,12 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -56,16 +61,13 @@ public class ShoppingListCardView extends ActionBarActivity implements IShopping
         mAdapter = new MyRecyclerViewShoppingListAdapter(getDataSet());
         mAdapter.setShoppingListItemButtonsListener(this);
         mRecyclerView.setAdapter(mAdapter);
-
-
     }
-
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_shopping_list_card_view, menu);
+        this.setTitle(ParseUser.getCurrentUser().getString("username"));
         return true;
     }
 
@@ -78,11 +80,43 @@ public class ShoppingListCardView extends ActionBarActivity implements IShopping
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.addShoppingList) {
-            addNewShoppingList();
+            fireNewShoppingListDialog();
             return true;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void fireNewShoppingListDialog() {
+       LayoutInflater li = LayoutInflater.from(this);
+        View promptsView = li.inflate(R.layout.new_list_name_dialog, null);
+
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+        alertDialogBuilder.setView(promptsView);
+
+        final EditText userInput = (EditText) promptsView
+                .findViewById(R.id.editTextDialogUserInput);
+
+        // set dialog message
+        alertDialogBuilder
+                .setCancelable(false)
+                .setPositiveButton("OK",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog,int id) {
+                                addNewShoppingList(String.valueOf(userInput.getText()));
+                            }
+                        })
+                .setNegativeButton("Cancel",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog,int id) {
+                                dialog.cancel();
+                            }
+                        });
+
+        // create and show alert dialog
+        AlertDialog alertDialog = alertDialogBuilder.create();
+        alertDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+        alertDialog.show();
     }
 
     @Override
@@ -128,11 +162,11 @@ public class ShoppingListCardView extends ActionBarActivity implements IShopping
         return results;
     }
 
-    private void addNewShoppingList() {
+    private void addNewShoppingList(String shoppingListName) {
 
-
+        final String name = shoppingListName;
         final ParseObject shoppingList = new ParseObject("n_shoppingLists");
-        shoppingList.put("shoppingListName", "myList A" + itemIndex);
+        shoppingList.put("shoppingListName", name);
         shoppingList.put("shoppingListIsDeleted", false);
 
         final ParseObject userShoppingListRelationship = new ParseObject("n_usersListsRelationships");
@@ -145,7 +179,7 @@ public class ShoppingListCardView extends ActionBarActivity implements IShopping
                     Drawable img1;
                     Resources res = getResources();
                     img1 = res.getDrawable(R.drawable.list_bg_supermarket);
-                    DataObjectShoppingList objSuperMarket = new DataObjectShoppingList(shoppingList.getObjectId(),"Supermarket", img1 );
+                    DataObjectShoppingList objSuperMarket = new DataObjectShoppingList(shoppingList.getObjectId(),name, img1);
                     ((MyRecyclerViewShoppingListAdapter) mAdapter).addItem(objSuperMarket, itemIndex++);
                 } else {
                     Log.i(TAG, "save to usersShoppingListRelationship failed, error = " + e.getMessage());
@@ -196,14 +230,15 @@ public class ShoppingListCardView extends ActionBarActivity implements IShopping
                 break;
             case BTN_EDIT:
                 Log.i(TAG, "BTN_EDIT " + position);
+                Intent mainIntent = new Intent(ShoppingListCardView.this, ItemListCardView.class);
+                ShoppingListCardView.this.startActivity(mainIntent);
                 break;
             case BTN_SHARE:
                 Log.i(TAG, "BTN_SHARE " + position);
                 break;
             case BTN_ITEM_SELECTED:
                 Log.i(TAG, "BTN_ITEM_SELECTED " + position);
-                Intent mainIntent = new Intent(ShoppingListCardView.this, ItemListCardView.class);
-                ShoppingListCardView.this.startActivity(mainIntent);
+
                 break;
         }
     }
