@@ -9,10 +9,14 @@ import android.media.Image;
 public class DataObjectShoppingList {
     private Drawable mImageCategory;
     private String mText1;
-
-    public DataObjectShoppingList(String text1, Drawable imageCategory){
+    private String mId;
+    public DataObjectShoppingList(String id, String text1, Drawable imageCategory){
+        mId = id;
         mText1 = text1;
         mImageCategory = imageCategory;
+    }
+    public String getmId() {
+        return mId;
     }
 
     public String getmText1() {

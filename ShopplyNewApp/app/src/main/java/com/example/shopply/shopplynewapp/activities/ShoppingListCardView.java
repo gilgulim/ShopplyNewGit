@@ -18,15 +18,13 @@ import android.widget.Toast;
 
 import com.example.shopply.shopplynewapp.DataObjectShoppingList;
 import com.example.shopply.shopplynewapp.R;
+import com.example.shopply.shopplynewapp.adapters.IShoppingListButtonsListener;
 import com.example.shopply.shopplynewapp.adapters.MyRecyclerViewShoppingListAdapter;
 import com.facebook.appevents.AppEventsLogger;
 import com.parse.FindCallback;
-import com.parse.GetCallback;
-import com.parse.Parse;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
-import com.parse.ParseRelation;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
@@ -34,13 +32,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class ShoppingListCardView extends ActionBarActivity {
+public class ShoppingListCardView extends ActionBarActivity implements IShoppingListButtonsListener {
+
+
     private RecyclerView mRecyclerView;
-    private RecyclerView.Adapter mAdapter;
+    private MyRecyclerViewShoppingListAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
     private static final String  TAG = " > > > ShoppingList:";
     private ArrayList results = new ArrayList<DataObjectShoppingList>();
     private int itemIndex = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,21 +54,10 @@ public class ShoppingListCardView extends ActionBarActivity {
         mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLayoutManager);
         mAdapter = new MyRecyclerViewShoppingListAdapter(getDataSet());
+        mAdapter.setShoppingListItemButtonsListener(this);
         mRecyclerView.setAdapter(mAdapter);
 
-        // Code to remove an item with default animation
-        //((MyRecyclerViewShoppingListAdapter) mAdapter).deleteItem(index);
 
-
-        TextView itemsList = (TextView)findViewById(R.id.goToItemList);
-        itemsList.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent mainIntent = new Intent(ShoppingListCardView.this, ItemListCardView.class);
-                ShoppingListCardView.this.startActivity(mainIntent);
-                //ShoppingListCardView.this.finish();
-            }
-        });
     }
 
 
@@ -98,18 +88,12 @@ public class ShoppingListCardView extends ActionBarActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        ((MyRecyclerViewShoppingListAdapter) mAdapter).setOnItemClickListener(new MyRecyclerViewShoppingListAdapter.MyClickListener() {
-            @Override
-            public void onItemClick(int position, View v) {
-            }
-        });
 
         // Logs 'install' and 'app activate' App Events.
         AppEventsLogger.activateApp(this);
     }
 
     private ArrayList<DataObjectShoppingList> getDataSet() {
-        Log.i(TAG, "results before: " + results.size());
         final Drawable img1;
         Resources res = getResources();
         img1 = res.getDrawable(R.drawable.list_bg_supermarket);
@@ -121,21 +105,16 @@ public class ShoppingListCardView extends ActionBarActivity {
             List<ParseObject> listOfRelationships = query.find();
             if (listOfRelationships.size() > 0){
                 for (ParseObject listObject : listOfRelationships) {
-
                     ParseObject shoppingListRelationshipObject = (ParseObject) listObject.getParseObject("listID");
                     Log.i(TAG, "object ID = " + listObject.getObjectId() + ", listID = " + shoppingListRelationshipObject.getObjectId());
-
                     ParseQuery<ParseObject> listQuery = new ParseQuery("n_shoppingLists");
                     listQuery.whereEqualTo("objectId", shoppingListRelationshipObject.getObjectId());
                     listQuery.whereEqualTo("shoppingListIsDeleted", false);
                     try {
                         List<ParseObject> listOfShoppingLists = listQuery.find();
-
-
                         if (listOfShoppingLists.size() > 0) {
-                            Log.i(TAG, "Parse Object = " + listOfShoppingLists.get(0).getObjectId() + " - " + listOfShoppingLists.get(0).getString("shoppingListName"));
                             String shoppingListName = listOfShoppingLists.get(0).getString("shoppingListName");
-                            DataObjectShoppingList shoppingListItem = new DataObjectShoppingList(shoppingListName, img1);
+                            DataObjectShoppingList shoppingListItem = new DataObjectShoppingList(listOfShoppingLists.get(0).getObjectId(),shoppingListName, img1);
                             results.add(itemIndex++, shoppingListItem);
                         }
                     } catch (ParseException e1) {
@@ -150,23 +129,23 @@ public class ShoppingListCardView extends ActionBarActivity {
     }
 
     private void addNewShoppingList() {
-        Drawable img1,img2;
-        Resources res = getResources();
-        img1 = res.getDrawable(R.drawable.list_bg_supermarket);
-        img2 = res.getDrawable(R.drawable.list_bg_pharmacy);
-        final DataObjectShoppingList objSuperMarket = new DataObjectShoppingList("Supermarket", img1 );
 
-        ParseObject shoppingList = new ParseObject("n_shoppingLists");
+
+        final ParseObject shoppingList = new ParseObject("n_shoppingLists");
         shoppingList.put("shoppingListName", "myList A" + itemIndex);
         shoppingList.put("shoppingListIsDeleted", false);
 
-        ParseObject userShoppingListRelationship = new ParseObject("n_usersListsRelationships");
+        final ParseObject userShoppingListRelationship = new ParseObject("n_usersListsRelationships");
         userShoppingListRelationship.put("listID", shoppingList);
         userShoppingListRelationship.put("userID", ParseUser.getCurrentUser());
         userShoppingListRelationship.saveInBackground(new SaveCallback() {
             @Override
             public void done(ParseException e) {
                 if (e == null) {
+                    Drawable img1;
+                    Resources res = getResources();
+                    img1 = res.getDrawable(R.drawable.list_bg_supermarket);
+                    DataObjectShoppingList objSuperMarket = new DataObjectShoppingList(shoppingList.getObjectId(),"Supermarket", img1 );
                     ((MyRecyclerViewShoppingListAdapter) mAdapter).addItem(objSuperMarket, itemIndex++);
                 } else {
                     Log.i(TAG, "save to usersShoppingListRelationship failed, error = " + e.getMessage());
@@ -181,5 +160,51 @@ public class ShoppingListCardView extends ActionBarActivity {
 
         // Logs 'app deactivate' App Event.
         AppEventsLogger.deactivateApp(this);
+    }
+
+    @Override
+    public void onShoppingListButtonClicked(ShoppingListButtonType buttonType, int position) {
+
+        switch (buttonType){
+            case BTN_DISCARD:
+                Log.i(TAG, "BTN_DISCARD " + position);
+                final String objectID = mAdapter.getObjectId(position);
+                mAdapter.deleteItem(position);
+
+                ParseQuery<ParseObject> query = ParseQuery.getQuery("n_shoppingLists");
+                query.whereEqualTo("objectId", objectID);
+                query.findInBackground(new FindCallback<ParseObject>() {
+                    @Override
+                    public void done(List<ParseObject> list, ParseException e) {
+                        if (e == null){
+                            if (list.size() > 0 ){
+                                list.get(0).put("shoppingListIsDeleted", true);
+                                list.get(0).saveInBackground(new SaveCallback() {
+                                    @Override
+                                    public void done(ParseException e) {
+                                        if (e != null){
+                                            Log.i(TAG,"onShoppingListButtonClicked() save list update failed, error = " + e.getMessage());
+                                        }
+                                    }
+                                });
+                            }
+                        }else{
+                            Log.i(TAG,"onShoppingListButtonClicked() get list failed, error = " + e.getMessage());
+                        }
+                    }
+                });
+                break;
+            case BTN_EDIT:
+                Log.i(TAG, "BTN_EDIT " + position);
+                break;
+            case BTN_SHARE:
+                Log.i(TAG, "BTN_SHARE " + position);
+                break;
+            case BTN_ITEM_SELECTED:
+                Log.i(TAG, "BTN_ITEM_SELECTED " + position);
+                Intent mainIntent = new Intent(ShoppingListCardView.this, ItemListCardView.class);
+                ShoppingListCardView.this.startActivity(mainIntent);
+                break;
+        }
     }
 }
