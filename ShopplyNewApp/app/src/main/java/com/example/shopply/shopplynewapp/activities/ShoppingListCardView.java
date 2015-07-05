@@ -43,7 +43,7 @@ public class ShoppingListCardView extends ActionBarActivity implements IShopping
     private RecyclerView mRecyclerView;
     private MyRecyclerViewShoppingListAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
-    private static final String  TAG = " > > > ShoppingList:";
+    private static final String  TAG = " > > > ShoppingLists:";
     private ArrayList results = new ArrayList<DataObjectShoppingList>();
     private int itemIndex = 0;
 
@@ -230,8 +230,11 @@ public class ShoppingListCardView extends ActionBarActivity implements IShopping
                 break;
             case BTN_EDIT:
                 Log.i(TAG, "BTN_EDIT " + position);
+
                 Intent mainIntent = new Intent(ShoppingListCardView.this, ItemListCardView.class);
+                mainIntent.putExtra("listObjectID", mAdapter.getObjectId(position));
                 ShoppingListCardView.this.startActivity(mainIntent);
+
                 break;
             case BTN_SHARE:
                 Log.i(TAG, "BTN_SHARE " + position);
