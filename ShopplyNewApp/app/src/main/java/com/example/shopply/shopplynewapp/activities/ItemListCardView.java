@@ -16,6 +16,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.NumberPicker;
 import android.widget.Toast;
 import android.widget.ToggleButton;
@@ -35,6 +37,8 @@ import java.util.List;
 
 
 public class ItemListCardView extends ActionBarActivity {
+    private ArrayList<ImageButton> itemTypeIcons = new ArrayList<ImageButton>();
+    private int itemTypeIconsIndex=0;
     private RecyclerView mRecyclerViewItem;
     private RecyclerView.Adapter mAdapterItem;
     private RecyclerView.LayoutManager mLayoutManagerItem;
@@ -42,6 +46,8 @@ public class ItemListCardView extends ActionBarActivity {
     private String shoppingListObjectID;
     private ArrayList results = new ArrayList<DataObjectItem>();
     private int itemIndex = 0;
+    private LayoutInflater li;
+    private View promptsView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,8 +59,13 @@ public class ItemListCardView extends ActionBarActivity {
         mRecyclerViewItem.setHasFixedSize(true);
         mLayoutManagerItem = new LinearLayoutManager(this);
         mRecyclerViewItem.setLayoutManager(mLayoutManagerItem);
+        li = LayoutInflater.from(this);
+        promptsView = li.inflate(R.layout.new_item_dialog, null);
         mAdapterItem = new MyRecyclerViewItemListAdapter(getDataSet());
         mRecyclerViewItem.setAdapter(mAdapterItem);
+
+        //load icons in order to retrieve items' icons images
+
 
         // Code to Add an item with default animation
         //((MyRecyclerViewShoppingListAdapter) mAdapter).addItem(obj, index);
@@ -102,12 +113,20 @@ public class ItemListCardView extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
     private void fireNewItemDialog() {
-        LayoutInflater li = LayoutInflater.from(this);
-        View promptsView = li.inflate(R.layout.new_item_dialog, null);
 
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
         alertDialogBuilder.setView(promptsView);
 
+        final ImageView previewIcon = (ImageView)promptsView.findViewById(R.id.imageViewPreview);
+        for(final ImageButton imageView:itemTypeIcons){
+           imageView.setOnClickListener(new View.OnClickListener() {
+               @Override
+               public void onClick(View v) {
+                   previewIcon.setImageDrawable(imageView.getDrawable());
+                   itemTypeIconsIndex = itemTypeIcons.indexOf(imageView);
+               }
+           });
+        }
         final EditText itemName = (EditText) promptsView.findViewById(R.id.editTextNewItemName);
         final ToggleButton itemQtyType = (ToggleButton) promptsView.findViewById(R.id.toggleButtonItemQtyType);
         final NumberPicker itemQty = (NumberPicker) promptsView.findViewById(R.id.numberPickerItemQty);
@@ -121,7 +140,7 @@ public class ItemListCardView extends ActionBarActivity {
                 .setPositiveButton("OK",
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog,int id) {
-                                addNewItem(String.valueOf(itemName.getText()), itemQtyType.isChecked(), itemQty.getValue());
+                                addNewItem(itemTypeIconsIndex, String.valueOf(itemName.getText()), itemQtyType.isChecked(), itemQty.getValue());
                             }
                         })
                 .setNegativeButton("Cancel",
@@ -136,12 +155,36 @@ public class ItemListCardView extends ActionBarActivity {
         alertDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
         alertDialog.show();
     }
-    private void addNewItem(final String s, final boolean checked, final int value) {
+
+    private void getItemTypeIconsImageViewArray(View promptsView) {
+        itemTypeIcons.add((ImageButton)promptsView.findViewById(R.id.imageButtonApple));
+        itemTypeIcons.add((ImageButton)promptsView.findViewById(R.id.imageButtonBanana));
+        itemTypeIcons.add((ImageButton)promptsView.findViewById(R.id.imageButtonBoxWheat));
+        itemTypeIcons.add((ImageButton)promptsView.findViewById(R.id.imageButtonBroccoli));
+        itemTypeIcons.add((ImageButton)promptsView.findViewById(R.id.imageButtonCarrot));
+        itemTypeIcons.add((ImageButton)promptsView.findViewById(R.id.imageButtonCheese));
+        itemTypeIcons.add((ImageButton)promptsView.findViewById(R.id.imageButtonChicken));
+        itemTypeIcons.add((ImageButton)promptsView.findViewById(R.id.imageButtonCleaning));
+        itemTypeIcons.add((ImageButton)promptsView.findViewById(R.id.imageButtonCroissant));
+        itemTypeIcons.add((ImageButton)promptsView.findViewById(R.id.imageButtonFavorite));
+        itemTypeIcons.add((ImageButton)promptsView.findViewById(R.id.imageButtonFish));
+        itemTypeIcons.add((ImageButton)promptsView.findViewById(R.id.imageButtonFullChicken));
+        itemTypeIcons.add((ImageButton)promptsView.findViewById(R.id.imageButtonMilk));
+        itemTypeIcons.add((ImageButton)promptsView.findViewById(R.id.imageButtonOil));
+        itemTypeIcons.add((ImageButton)promptsView.findViewById(R.id.imageButtonSteak));
+        itemTypeIcons.add((ImageButton)promptsView.findViewById(R.id.imageButtonTomato));
+        itemTypeIcons.add((ImageButton)promptsView.findViewById(R.id.imageButtonWheat));
+        itemTypeIcons.add((ImageButton)promptsView.findViewById(R.id.imageButtonWine));
+        itemTypeIcons.add((ImageButton)promptsView.findViewById(R.id.imageButtonBread));
+    }
+
+    private void addNewItem(int iconTypeIndex, final String s, final boolean checked, final int value) {
 
         final ParseObject listItem = new ParseObject("n_items");
         listItem.put("itemName", s);
         listItem.put("itemQty", value);
         listItem.put("itemQtyType", (checked == false ? "QTY" : "KG"));
+        listItem.put("itemTypeIndex", iconTypeIndex);
 
         final ParseQuery<ParseObject> shoppingListObject = ParseQuery.getQuery("n_shoppingLists");
         shoppingListObject.whereEqualTo("objectId", shoppingListObjectID);
@@ -160,7 +203,7 @@ public class ItemListCardView extends ActionBarActivity {
                                 if (e == null){
                                     Drawable img1;
                                     Resources res = getResources();
-                                    img1 = res.getDrawable(R.drawable.list_bg_supermarket);
+                                    img1 = itemTypeIcons.get(itemTypeIconsIndex).getDrawable();
                                     DataObjectItem item = new DataObjectItem(s, img1, value , checked == false ? 0 : 1);
                                     ((MyRecyclerViewItemListAdapter) mAdapterItem).addItem(item, itemIndex++);
                                 }else {
@@ -191,18 +234,17 @@ public class ItemListCardView extends ActionBarActivity {
     }
 
     private ArrayList<DataObjectItem> getDataSet() {
-        Drawable img1,img2;
+        Drawable img1;
         Resources res = getResources();
-        img1 = res.getDrawable(R.drawable.list_bg_supermarket);
-
+        getItemTypeIconsImageViewArray(promptsView);
 
         final ParseQuery<ParseObject> shoppingListObject = ParseQuery.getQuery("n_shoppingLists");
         shoppingListObject.whereEqualTo("objectId", shoppingListObjectID);
         try{
-            List<ParseObject> listOfshoppingListObjects = shoppingListObject.find();
-            if (listOfshoppingListObjects.size() > 0 ){
+            List<ParseObject> listOfShoppingListObjects = shoppingListObject.find();
+            if (listOfShoppingListObjects.size() > 0 ){
                 ParseQuery<ParseObject> query = new ParseQuery("n_itemsListsRelationships");
-                query.whereEqualTo("listID",listOfshoppingListObjects.get(0));
+                query.whereEqualTo("listID", listOfShoppingListObjects.get(0));
                 query.include("itemID");
                 List<ParseObject> listOfRelationships = query.find();
                 if (listOfRelationships.size() > 0){
@@ -217,7 +259,9 @@ public class ItemListCardView extends ActionBarActivity {
                         if(listOfItems.size() > 0 ){
                             String itemName = listOfItems.get(0).getString("itemName");
                             int itemQty = listOfItems.get(0).getInt("itemQty");
+                            int itemTypeIndex = listOfItems.get(0).getInt("itemTypeIndex");
                             String itemQtyType = listOfItems.get(0).getString("itemQtyType");
+                            img1 = itemTypeIcons.get(itemTypeIndex).getDrawable();
                             DataObjectItem item = new DataObjectItem(itemName, img1, itemQty , (itemQtyType == "QTY" ? 0 : 1));
                             results.add(itemIndex++,item);
                         }
@@ -229,40 +273,7 @@ public class ItemListCardView extends ActionBarActivity {
             Log.i(TAG,"get shopping list object with items data failed, error = " + e.getMessage());
         }
 
-
         return results;
-
-
-        /*
-        ParseQuery<ParseObject> query = new ParseQuery("n_usersListsRelationships");
-        query.whereEqualTo("userID", ParseUser.getCurrentUser());
-        query.include("listID");
-        try {
-            List<ParseObject> listOfRelationships = query.find();
-            if (listOfRelationships.size() > 0){
-                for (ParseObject listObject : listOfRelationships) {
-                    ParseObject shoppingListRelationshipObject = (ParseObject) listObject.getParseObject("listID");
-                    Log.i(TAG, "object ID = " + listObject.getObjectId() + ", listID = " + shoppingListRelationshipObject.getObjectId());
-                    ParseQuery<ParseObject> listQuery = new ParseQuery("n_shoppingLists");
-                    listQuery.whereEqualTo("objectId", shoppingListRelationshipObject.getObjectId());
-                    listQuery.whereEqualTo("shoppingListIsDeleted", false);
-                    try {
-                        List<ParseObject> listOfShoppingLists = listQuery.find();
-                        if (listOfShoppingLists.size() > 0) {
-                            String shoppingListName = listOfShoppingLists.get(0).getString("shoppingListName");
-                            DataObjectShoppingList shoppingListItem = new DataObjectShoppingList(listOfShoppingLists.get(0).getObjectId(),shoppingListName, img1);
-                            results.add(itemIndex++, shoppingListItem);
-                        }
-                    } catch (ParseException e1) {
-                        e1.printStackTrace();
-                    }
-                }
-            }
-        } catch (ParseException e) {
-            Log.i(TAG, "query: get usersListsRelationships :: Error: " + e.getMessage());
-        }
-        return results;
-         */
     }
 
 

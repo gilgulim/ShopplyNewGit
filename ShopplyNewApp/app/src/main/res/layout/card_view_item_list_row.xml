@@ -9,7 +9,7 @@
         android:id="@+id/card_view_item"
         android:layout_gravity="center"
         android:layout_width="fill_parent"
-        android:layout_height="80dp"
+        android:layout_height="70dp"
         card_view:contentPadding="10dp"
         android:layout_margin="1dp"
         card_view:cardCornerRadius="0dp">
@@ -19,8 +19,8 @@
             android:layout_height="fill_parent">
 
             <ImageView
-                android:layout_width="60dp"
-                android:layout_height="60dp"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
                 android:id="@+id/ItemListImage"
                 android:layout_centerVertical="true"
                 android:layout_alignParentLeft="true"
@@ -33,6 +33,7 @@
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:textStyle="normal"
                 android:paddingLeft="10dp"
+                android:layout_marginTop="-4dp"
                 android:layout_alignTop="@+id/ItemListImage"
                 android:layout_toRightOf="@+id/ItemListImage"
                 android:layout_toEndOf="@+id/ItemListImage" />
@@ -44,6 +45,7 @@
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:textStyle="normal"
                 android:paddingLeft="10dp"
+                android:layout_marginBottom="-4dp"
                 android:layout_alignBottom="@+id/ItemListImage"
                 android:layout_toRightOf="@+id/ItemListImage"
                 android:layout_toEndOf="@+id/ItemListImage" />
