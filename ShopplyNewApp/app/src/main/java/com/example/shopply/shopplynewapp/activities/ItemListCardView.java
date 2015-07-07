@@ -1,5 +1,7 @@
 package com.example.shopply.shopplynewapp.activities;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.res.Resources;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
@@ -8,10 +10,15 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
+import android.widget.EditText;
+import android.widget.NumberPicker;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import com.example.shopply.shopplynewapp.DataObjectItem;
 import com.example.shopply.shopplynewapp.R;
@@ -88,20 +95,53 @@ public class ItemListCardView extends ActionBarActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.addItem) {
-            addNewItem();
-            //fireNewShoppingListDialog();
+            fireNewItemDialog();
             return true;
         }
 
         return super.onOptionsItemSelected(item);
     }
+    private void fireNewItemDialog() {
+        LayoutInflater li = LayoutInflater.from(this);
+        View promptsView = li.inflate(R.layout.new_item_dialog, null);
 
-    private void addNewItem() {
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+        alertDialogBuilder.setView(promptsView);
+
+        final EditText itemName = (EditText) promptsView.findViewById(R.id.editTextNewItemName);
+        final ToggleButton itemQtyType = (ToggleButton) promptsView.findViewById(R.id.toggleButtonItemQtyType);
+        final NumberPicker itemQty = (NumberPicker) promptsView.findViewById(R.id.numberPickerItemQty);
+        itemQty.setValue(1);
+        itemQty.setMaxValue(99);
+        itemQty.setWrapSelectorWheel(true);
+        itemQty.setMinValue(1);
+        // set dialog message
+        alertDialogBuilder
+                .setCancelable(false)
+                .setPositiveButton("OK",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog,int id) {
+                                addNewItem(String.valueOf(itemName.getText()), itemQtyType.isChecked(), itemQty.getValue());
+                            }
+                        })
+                .setNegativeButton("Cancel",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog,int id) {
+                                dialog.cancel();
+                            }
+                        });
+
+        // create and show alert dialog
+        AlertDialog alertDialog = alertDialogBuilder.create();
+        alertDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+        alertDialog.show();
+    }
+    private void addNewItem(final String s, final boolean checked, final int value) {
 
         final ParseObject listItem = new ParseObject("n_items");
-        listItem.put("itemName", "new Item");
-        listItem.put("itemQty", 1);
-        listItem.put("itemQtyType", "QTY");
+        listItem.put("itemName", s);
+        listItem.put("itemQty", value);
+        listItem.put("itemQtyType", (checked == false ? "QTY" : "KG"));
 
         final ParseQuery<ParseObject> shoppingListObject = ParseQuery.getQuery("n_shoppingLists");
         shoppingListObject.whereEqualTo("objectId", shoppingListObjectID);
@@ -121,7 +161,7 @@ public class ItemListCardView extends ActionBarActivity {
                                     Drawable img1;
                                     Resources res = getResources();
                                     img1 = res.getDrawable(R.drawable.list_bg_supermarket);
-                                    DataObjectItem item = new DataObjectItem("new Item", img1, 3 , 1);
+                                    DataObjectItem item = new DataObjectItem(s, img1, value , checked == false ? 0 : 1);
                                     ((MyRecyclerViewItemListAdapter) mAdapterItem).addItem(item, itemIndex++);
                                 }else {
                                     Log.i(TAG, "save new item failed, error = " + e.getMessage());

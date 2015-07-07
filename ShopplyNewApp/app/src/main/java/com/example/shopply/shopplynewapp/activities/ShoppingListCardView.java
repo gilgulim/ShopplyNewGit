@@ -17,9 +17,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.shopply.shopplynewapp.DataObjectShoppingList;
 import com.example.shopply.shopplynewapp.R;
@@ -89,7 +86,7 @@ public class ShoppingListCardView extends ActionBarActivity implements IShopping
 
     private void fireNewShoppingListDialog() {
        LayoutInflater li = LayoutInflater.from(this);
-        View promptsView = li.inflate(R.layout.new_list_name_dialog, null);
+        View promptsView = li.inflate(R.layout.new_list_dialog, null);
 
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
         alertDialogBuilder.setView(promptsView);
@@ -202,31 +199,7 @@ public class ShoppingListCardView extends ActionBarActivity implements IShopping
         switch (buttonType){
             case BTN_DISCARD:
                 Log.i(TAG, "BTN_DISCARD " + position);
-                final String objectID = mAdapter.getObjectId(position);
-                mAdapter.deleteItem(position);
-
-                ParseQuery<ParseObject> query = ParseQuery.getQuery("n_shoppingLists");
-                query.whereEqualTo("objectId", objectID);
-                query.findInBackground(new FindCallback<ParseObject>() {
-                    @Override
-                    public void done(List<ParseObject> list, ParseException e) {
-                        if (e == null){
-                            if (list.size() > 0 ){
-                                list.get(0).put("shoppingListIsDeleted", true);
-                                list.get(0).saveInBackground(new SaveCallback() {
-                                    @Override
-                                    public void done(ParseException e) {
-                                        if (e != null){
-                                            Log.i(TAG,"onShoppingListButtonClicked() save list update failed, error = " + e.getMessage());
-                                        }
-                                    }
-                                });
-                            }
-                        }else{
-                            Log.i(TAG,"onShoppingListButtonClicked() get list failed, error = " + e.getMessage());
-                        }
-                    }
-                });
+                fireDeleteShoppingListDialog(position);
                 break;
             case BTN_EDIT:
                 Log.i(TAG, "BTN_EDIT " + position);
@@ -244,5 +217,59 @@ public class ShoppingListCardView extends ActionBarActivity implements IShopping
 
                 break;
         }
+    }
+
+    private void fireDeleteShoppingListDialog(final int position) {
+            LayoutInflater li = LayoutInflater.from(this);
+            View promptsView = li.inflate(R.layout.delete_list_dialog, null);
+
+            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+            alertDialogBuilder.setView(promptsView);
+
+            // set dialog message
+            alertDialogBuilder.setCancelable(false).setPositiveButton("YES",
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            deleteShoppingList(position);
+                        }
+                    })
+                    .setNegativeButton("Cancel",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog,int id) {
+                                    dialog.cancel();
+                                }
+                            });
+
+            // create and show alert dialog
+            AlertDialog alertDialog = alertDialogBuilder.create();
+            alertDialog.show();
+    }
+
+    private void deleteShoppingList(int position) {
+        final String objectID = mAdapter.getObjectId(position);
+        mAdapter.deleteItem(position);
+
+        ParseQuery<ParseObject> query = ParseQuery.getQuery("n_shoppingLists");
+        query.whereEqualTo("objectId", objectID);
+        query.findInBackground(new FindCallback<ParseObject>() {
+            @Override
+            public void done(List<ParseObject> list, ParseException e) {
+                if (e == null){
+                    if (list.size() > 0 ){
+                        list.get(0).put("shoppingListIsDeleted", true);
+                        list.get(0).saveInBackground(new SaveCallback() {
+                            @Override
+                            public void done(ParseException e) {
+                                if (e != null){
+                                    Log.i(TAG,"onShoppingListButtonClicked() save list update failed, error = " + e.getMessage());
+                                }
+                            }
+                        });
+                    }
+                }else{
+                    Log.i(TAG,"onShoppingListButtonClicked() get list failed, error = " + e.getMessage());
+                }
+            }
+        });
     }
 }
