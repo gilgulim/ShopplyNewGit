@@ -12,8 +12,10 @@
     <EditText
         android:id="@+id/editTextDialogUserInput"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
-
+        android:layout_height="wrap_content"
+        android:inputType="textCapWords"
+        android:imeOptions="actionDone"
+        android:singleLine="true">
         <requestFocus />
 
     </EditText>

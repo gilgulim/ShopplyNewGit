@@ -2,9 +2,10 @@ package com.example.shopply.shopplynewapp.activities;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.content.res.Resources;
+import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
+import android.media.Image;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -37,8 +38,8 @@ import java.util.List;
 
 
 public class ItemListCardView extends ActionBarActivity {
-    private ArrayList<ImageButton> itemTypeIcons = new ArrayList<ImageButton>();
-    private int itemTypeIconsIndex=0;
+
+    private int itemTypeIconsIndex;
     private RecyclerView mRecyclerViewItem;
     private RecyclerView.Adapter mAdapterItem;
     private RecyclerView.LayoutManager mLayoutManagerItem;
@@ -48,19 +49,20 @@ public class ItemListCardView extends ActionBarActivity {
     private int itemIndex = 0;
     private LayoutInflater li;
     private View promptsView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_item_list_card_view);
 
-        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.ActionBarColor)));
+        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources()
+                .getColor(R.color.ActionBarColor)));
         shoppingListObjectID = getIntent().getStringExtra("listObjectID");
         mRecyclerViewItem = (RecyclerView) findViewById(R.id.my_recycler_view_item);
         mRecyclerViewItem.setHasFixedSize(true);
         mLayoutManagerItem = new LinearLayoutManager(this);
         mRecyclerViewItem.setLayoutManager(mLayoutManagerItem);
-        li = LayoutInflater.from(this);
-        promptsView = li.inflate(R.layout.new_item_dialog, null);
+
         mAdapterItem = new MyRecyclerViewItemListAdapter(getDataSet());
         mRecyclerViewItem.setAdapter(mAdapterItem);
 
@@ -113,11 +115,19 @@ public class ItemListCardView extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
     private void fireNewItemDialog() {
-
+        //default itemCategoryIndex
+        itemTypeIconsIndex=0;
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+        if(promptsView.getParent()!=null){
+            //create new view for dialog
+            promptsView = li.inflate(R.layout.new_item_dialog, null);
+        }
         alertDialogBuilder.setView(promptsView);
+        final ArrayList<ImageButton> itemTypeIcons = getItemTypeIconsImageViewArray(promptsView);
+
 
         final ImageView previewIcon = (ImageView)promptsView.findViewById(R.id.imageViewPreview);
+        previewIcon.setColorFilter(Color.parseColor("#9DC709"));
         for(final ImageButton imageView:itemTypeIcons){
            imageView.setOnClickListener(new View.OnClickListener() {
                @Override
@@ -128,8 +138,10 @@ public class ItemListCardView extends ActionBarActivity {
            });
         }
         final EditText itemName = (EditText) promptsView.findViewById(R.id.editTextNewItemName);
-        final ToggleButton itemQtyType = (ToggleButton) promptsView.findViewById(R.id.toggleButtonItemQtyType);
-        final NumberPicker itemQty = (NumberPicker) promptsView.findViewById(R.id.numberPickerItemQty);
+        final ToggleButton itemQtyType = (ToggleButton) promptsView
+                .findViewById(R.id.toggleButtonItemQtyType);
+        final NumberPicker itemQty = (NumberPicker) promptsView
+                .findViewById(R.id.numberPickerItemQty);
         itemQty.setValue(1);
         itemQty.setMaxValue(99);
         itemQty.setWrapSelectorWheel(true);
@@ -140,50 +152,78 @@ public class ItemListCardView extends ActionBarActivity {
                 .setPositiveButton("OK",
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog,int id) {
-                                addNewItem(itemTypeIconsIndex, String.valueOf(itemName.getText()), itemQtyType.isChecked(), itemQty.getValue());
+                                addNewItem(itemTypeIcons, itemTypeIconsIndex, String.valueOf(
+                                        itemName.getText())
+                                        , itemQtyType.isChecked()
+                                        , itemQty.getValue());
                             }
                         })
                 .setNegativeButton("Cancel",
                         new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog,int id) {
+                            public void onClick(DialogInterface dialog, int id) {
                                 dialog.cancel();
                             }
                         });
 
         // create and show alert dialog
+
         AlertDialog alertDialog = alertDialogBuilder.create();
-        alertDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+        alertDialog.getWindow().setSoftInputMode(
+                WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
         alertDialog.show();
     }
 
-    private void getItemTypeIconsImageViewArray(View promptsView) {
-        itemTypeIcons.add((ImageButton)promptsView.findViewById(R.id.imageButtonApple));
-        itemTypeIcons.add((ImageButton)promptsView.findViewById(R.id.imageButtonBanana));
-        itemTypeIcons.add((ImageButton)promptsView.findViewById(R.id.imageButtonBoxWheat));
-        itemTypeIcons.add((ImageButton)promptsView.findViewById(R.id.imageButtonBroccoli));
-        itemTypeIcons.add((ImageButton)promptsView.findViewById(R.id.imageButtonCarrot));
-        itemTypeIcons.add((ImageButton)promptsView.findViewById(R.id.imageButtonCheese));
-        itemTypeIcons.add((ImageButton)promptsView.findViewById(R.id.imageButtonChicken));
-        itemTypeIcons.add((ImageButton)promptsView.findViewById(R.id.imageButtonCleaning));
-        itemTypeIcons.add((ImageButton)promptsView.findViewById(R.id.imageButtonCroissant));
-        itemTypeIcons.add((ImageButton)promptsView.findViewById(R.id.imageButtonFavorite));
-        itemTypeIcons.add((ImageButton)promptsView.findViewById(R.id.imageButtonFish));
-        itemTypeIcons.add((ImageButton)promptsView.findViewById(R.id.imageButtonFullChicken));
-        itemTypeIcons.add((ImageButton)promptsView.findViewById(R.id.imageButtonMilk));
-        itemTypeIcons.add((ImageButton)promptsView.findViewById(R.id.imageButtonOil));
-        itemTypeIcons.add((ImageButton)promptsView.findViewById(R.id.imageButtonSteak));
-        itemTypeIcons.add((ImageButton)promptsView.findViewById(R.id.imageButtonTomato));
-        itemTypeIcons.add((ImageButton)promptsView.findViewById(R.id.imageButtonWheat));
-        itemTypeIcons.add((ImageButton)promptsView.findViewById(R.id.imageButtonWine));
-        itemTypeIcons.add((ImageButton)promptsView.findViewById(R.id.imageButtonBread));
+    private ArrayList<ImageButton> getItemTypeIconsImageViewArray(View promptsView) {
+        ArrayList<ImageButton> itemTypeIcons = new ArrayList<ImageButton>();
+        itemTypeIcons.add((ImageButton) promptsView.findViewById(R.id.imageButtonApple));
+        itemTypeIcons.get(0).setColorFilter(Color.parseColor("#9DC709"));
+        itemTypeIcons.add((ImageButton) promptsView.findViewById(R.id.imageButtonBanana));
+        itemTypeIcons.get(1).setColorFilter(Color.parseColor("#EEDB25"));
+        itemTypeIcons.add((ImageButton) promptsView.findViewById(R.id.imageButtonBoxWheat));
+        itemTypeIcons.get(2).setColorFilter(Color.parseColor("#8CC7FA"));
+        itemTypeIcons.add((ImageButton) promptsView.findViewById(R.id.imageButtonBroccoli));
+        itemTypeIcons.get(3).setColorFilter(Color.parseColor("#54A23C"));
+        itemTypeIcons.add((ImageButton) promptsView.findViewById(R.id.imageButtonCarrot));
+        itemTypeIcons.get(4).setColorFilter(Color.parseColor("#FB7519"));
+        itemTypeIcons.add((ImageButton) promptsView.findViewById(R.id.imageButtonCheese));
+        itemTypeIcons.get(5).setColorFilter(Color.parseColor("#FCC812"));
+        itemTypeIcons.add((ImageButton) promptsView.findViewById(R.id.imageButtonChicken));
+        itemTypeIcons.get(6).setColorFilter(Color.parseColor("#A6712D"));
+        itemTypeIcons.add((ImageButton) promptsView.findViewById(R.id.imageButtonCleaning));
+        itemTypeIcons.get(7).setColorFilter(Color.parseColor("#000000"));
+        itemTypeIcons.add((ImageButton) promptsView.findViewById(R.id.imageButtonCroissant));
+        itemTypeIcons.get(8).setColorFilter(Color.parseColor("#E48E29"));
+        itemTypeIcons.add((ImageButton) promptsView.findViewById(R.id.imageButtonFavorite));
+        itemTypeIcons.get(9).setColorFilter(Color.parseColor("#FFB404"));
+        itemTypeIcons.add((ImageButton) promptsView.findViewById(R.id.imageButtonFish));
+        itemTypeIcons.get(10).setColorFilter(Color.parseColor("#198298"));
+        itemTypeIcons.add((ImageButton) promptsView.findViewById(R.id.imageButtonFullChicken));
+        itemTypeIcons.get(11).setColorFilter(Color.parseColor("#A6712D"));
+        itemTypeIcons.add((ImageButton) promptsView.findViewById(R.id.imageButtonMilk));
+        itemTypeIcons.get(12).setColorFilter(Color.parseColor("#F8F5F0"));
+        itemTypeIcons.add((ImageButton) promptsView.findViewById(R.id.imageButtonOil));
+        itemTypeIcons.get(13).setColorFilter(Color.parseColor("#E5BE00"));
+        itemTypeIcons.add((ImageButton) promptsView.findViewById(R.id.imageButtonSteak));
+        itemTypeIcons.get(14).setColorFilter(Color.parseColor("#8E3018"));
+        itemTypeIcons.add((ImageButton) promptsView.findViewById(R.id.imageButtonTomato));
+        itemTypeIcons.get(15).setColorFilter(Color.parseColor("#DC2610"));
+        itemTypeIcons.add((ImageButton) promptsView.findViewById(R.id.imageButtonWheat));
+        itemTypeIcons.get(16).setColorFilter(Color.parseColor("#EBD37D"));
+        itemTypeIcons.add((ImageButton) promptsView.findViewById(R.id.imageButtonWine));
+        itemTypeIcons.get(17).setColorFilter(Color.parseColor("#8E0000"));
+        itemTypeIcons.add((ImageButton) promptsView.findViewById(R.id.imageButtonBread));
+        itemTypeIcons.get(18).setColorFilter(Color.parseColor("#D79A35"));
+
+        return itemTypeIcons;
     }
 
-    private void addNewItem(int iconTypeIndex, final String s, final boolean checked, final int value) {
+    private void addNewItem(final ArrayList<ImageButton> itemTypeIcons, int iconTypeIndex, final String s, final boolean checked
+            , final int value) {
 
         final ParseObject listItem = new ParseObject("n_items");
         listItem.put("itemName", s);
         listItem.put("itemQty", value);
-        listItem.put("itemQtyType", (checked == false ? "QTY" : "KG"));
+        listItem.put("itemQtyType", (!checked ? "QTY" : "KG"));
         listItem.put("itemTypeIndex", iconTypeIndex);
 
         final ParseQuery<ParseObject> shoppingListObject = ParseQuery.getQuery("n_shoppingLists");
@@ -202,9 +242,9 @@ public class ItemListCardView extends ActionBarActivity {
                             public void done(ParseException e) {
                                 if (e == null){
                                     Drawable img1;
-                                    Resources res = getResources();
+
                                     img1 = itemTypeIcons.get(itemTypeIconsIndex).getDrawable();
-                                    DataObjectItem item = new DataObjectItem(s, img1, value , checked == false ? 0 : 1);
+                                    DataObjectItem item = new DataObjectItem(s, img1, value , !checked ? 0 : 1);
                                     ((MyRecyclerViewItemListAdapter) mAdapterItem).addItem(item, itemIndex++);
                                 }else {
                                     Log.i(TAG, "save new item failed, error = " + e.getMessage());
@@ -235,8 +275,9 @@ public class ItemListCardView extends ActionBarActivity {
 
     private ArrayList<DataObjectItem> getDataSet() {
         Drawable img1;
-        Resources res = getResources();
-        getItemTypeIconsImageViewArray(promptsView);
+        li = LayoutInflater.from(this);
+        promptsView = li.inflate(R.layout.new_item_dialog, null);
+        ArrayList<ImageButton> itemTypeIcons = getItemTypeIconsImageViewArray(promptsView);
 
         final ParseQuery<ParseObject> shoppingListObject = ParseQuery.getQuery("n_shoppingLists");
         shoppingListObject.whereEqualTo("objectId", shoppingListObjectID);
@@ -262,7 +303,7 @@ public class ItemListCardView extends ActionBarActivity {
                             int itemTypeIndex = listOfItems.get(0).getInt("itemTypeIndex");
                             String itemQtyType = listOfItems.get(0).getString("itemQtyType");
                             img1 = itemTypeIcons.get(itemTypeIndex).getDrawable();
-                            DataObjectItem item = new DataObjectItem(itemName, img1, itemQty , (itemQtyType == "QTY" ? 0 : 1));
+                            DataObjectItem item = new DataObjectItem(itemName, img1, itemQty , (itemQtyType.equals("QTY") ? 0 : 1));
                             results.add(itemIndex++,item);
                         }
                     }

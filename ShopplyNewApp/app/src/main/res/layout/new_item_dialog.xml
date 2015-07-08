@@ -19,6 +19,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:hint="enter item name"
+        android:inputType="textCapWords"
         android:imeOptions="actionDone"
         android:singleLine="true"
         android:layout_row="0"
