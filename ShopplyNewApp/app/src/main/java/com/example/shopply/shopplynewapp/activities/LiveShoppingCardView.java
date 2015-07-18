@@ -13,6 +13,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.TextView;
 
 import com.example.shopply.shopplynewapp.DataObjectItem;
 import com.example.shopply.shopplynewapp.R;
@@ -27,6 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class LiveShoppingCardView extends ActionBarActivity {
+
     private int itemTypeIconsIndex;
     private RecyclerView mRecyclerViewItem;
     private RecyclerView.Adapter mAdapterItem;
@@ -37,17 +39,22 @@ public class LiveShoppingCardView extends ActionBarActivity {
     private int itemIndex = 0;
     private LayoutInflater li;
     private View promptsView;
+    private TextView shoppingClock;
+    private int hh=0,mm=0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_live_shopping_card_view);
+        initData();
+    }
 
+    private void initData() {
         getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources()
                 .getColor(R.color.ActionBarColor)));
-
         shoppingListObjectID = getIntent().getStringExtra("listObjectID");
         Log.i(TAG, "item ID = " + R.id.my_recycler_view_item);
+
         mRecyclerViewItem = (RecyclerView) findViewById(R.id.my_recycler_view_item);
         mRecyclerViewItem.setHasFixedSize(true);
         mLayoutManagerItem = new LinearLayoutManager(this);
@@ -55,6 +62,40 @@ public class LiveShoppingCardView extends ActionBarActivity {
 
         mAdapterItem = new MyRecyclerViewItemListAdapter(getDataSet());
         mRecyclerViewItem.setAdapter(mAdapterItem);
+
+        shoppingClock = (TextView) findViewById(R.id.textViewTime);
+        shoppingClock.setText("00:00:00");
+        startClockThread();
+    }
+
+    private void startClockThread() {
+        Thread t = new Thread() {
+            @Override
+        public void run(){
+                try {
+                    while (!isInterrupted()) {
+                        Thread.sleep(1000);
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                if(hh > 99){
+                                    hh=0;
+                                }
+                                if(mm > 59){
+                                    mm=0;
+                                    hh++;
+                                }
+                                shoppingClock.setText((hh < 10 ? "0" + hh : hh) + ":" +
+                                        (mm < 10 ? "0" + mm : mm));
+                                Log.i(TAG,(hh < 10 ? "0" + hh : hh) + ":" +
+                                        (mm < 10 ? "0" + mm : mm));
+                            }
+                        });
+                    }
+                } catch (InterruptedException e) {
+                }
+            }
+        };
     }
 
     @Override
