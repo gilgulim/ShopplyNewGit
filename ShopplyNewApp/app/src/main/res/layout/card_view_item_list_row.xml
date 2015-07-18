@@ -5,62 +5,106 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <android.support.v7.widget.CardView
-        android:id="@+id/card_view_item"
-        android:layout_gravity="center"
-        android:layout_width="fill_parent"
-        android:layout_height="70dp"
-        card_view:contentPadding="10dp"
-        android:layout_margin="1dp"
-        card_view:cardCornerRadius="0dp">
+    <com.daimajia.swipe.SwipeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent" android:layout_height="80dp" android:id="@+id/Item_SwipeLayout">
+        <!-- Left View Start-->
+        <LinearLayout
+            android:background="#ffd30807"
+            android:id="@+id/left_wrapper"
+            android:layout_width="160dp"
+            android:weightSum="1"
+            android:layout_height="match_parent">
 
-        <RelativeLayout
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="10sp"
+                android:src="@drawable/ic_delete"
+                android:id="@+id/imageView_delete" />
+        </LinearLayout>
+        <!-- Left View End-->
+
+        <!-- Right View Start-->
+        <LinearLayout
+            android:background="#ff0f8716"
+            android:id="@+id/right_wrapper"
+            android:layout_width="160dp"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:layoutDirection="rtl"
+            android:weightSum="1">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="110dp"
+                android:layout_gravity="center_vertical"
+                android:src="@drawable/ic_checkmark"
+                android:id="@+id/imageView_checkmark" />
+
+        </LinearLayout>
+        <!-- Right View End-->
+
+        <!-- Surface View Start -->
+        <android.support.v7.widget.CardView
+            android:id="@+id/card_view_item"
+            android:layout_gravity="center"
             android:layout_width="fill_parent"
-            android:layout_height="fill_parent">
+            android:layout_height="70dp"
+            card_view:contentPadding="10dp"
+            android:layout_margin="1dp"
+            card_view:cardCornerRadius="0dp">
 
-            <ImageView
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:id="@+id/ItemListImage"
-                android:layout_centerVertical="true"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true" />
+            <RelativeLayout
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent">
 
-            <TextView
-                android:id="@+id/ItemListName"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textStyle="normal"
-                android:paddingLeft="10dp"
-                android:layout_marginTop="-4dp"
-                android:layout_alignTop="@+id/ItemListImage"
-                android:layout_toRightOf="@+id/ItemListImage"
-                android:layout_toEndOf="@+id/ItemListImage" />
+                <ImageView
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:id="@+id/ItemListImage"
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true" />
 
-            <TextView
-                android:id="@+id/ItemListAmount"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:textStyle="normal"
-                android:paddingLeft="10dp"
-                android:layout_marginBottom="-4dp"
-                android:layout_alignBottom="@+id/ItemListImage"
-                android:layout_toRightOf="@+id/ItemListImage"
-                android:layout_toEndOf="@+id/ItemListImage" />
+                <TextView
+                    android:id="@+id/ItemListName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textStyle="normal"
+                    android:paddingLeft="10dp"
+                    android:layout_marginTop="-4dp"
+                    android:layout_alignTop="@+id/ItemListImage"
+                    android:layout_toRightOf="@+id/ItemListImage"
+                    android:layout_toEndOf="@+id/ItemListImage" />
+
+                <TextView
+                    android:id="@+id/ItemListAmount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:textStyle="normal"
+                    android:paddingLeft="10dp"
+                    android:layout_marginBottom="-4dp"
+                    android:layout_alignBottom="@+id/ItemListImage"
+                    android:layout_toRightOf="@+id/ItemListImage"
+                    android:layout_toEndOf="@+id/ItemListImage" />
 
 
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="24dp"
-                android:src="@drawable/ic_action_view_as_grid"
-                android:layout_centerVertical="true"
-                android:layout_alignParentRight="true"
-                android:layout_alignParentEnd="true" />
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_action_view_as_grid"
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentEnd="true" />
 
-        </RelativeLayout>
-    </android.support.v7.widget.CardView>
+            </RelativeLayout>
+        </android.support.v7.widget.CardView>
+        <!-- Surface View Start -->
+    </com.daimajia.swipe.SwipeLayout>
 
 
 </LinearLayout>

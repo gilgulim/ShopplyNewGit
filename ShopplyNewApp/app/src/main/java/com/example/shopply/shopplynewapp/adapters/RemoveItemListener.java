@@ -1,7 +1,11 @@
 package com.example.shopply.shopplynewapp.adapters;
 
+import android.view.View;
+
 /**
  * Created by Evyatar on 17/07/2015.
  */
-public class RemoveItemListener {
+public interface RemoveItemListener {
+
+    public void onItemRemove(int position);
 }
