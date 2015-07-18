@@ -171,31 +171,6 @@ public class ShoppingListCardView extends ActionBarActivity implements IShopping
         });
         return results;
     }
-//        try {
-//            List<ParseObject> listOfRelationships = query.find();
-//            if (listOfRelationships.size() > 0){
-//                for (ParseObject listObject : listOfRelationships) {
-//                    ParseObject shoppingListRelationshipObject = (ParseObject) listObject.getParseObject("listID");
-//                    Log.i(TAG, "object ID = " + listObject.getObjectId() + ", listID = " + shoppingListRelationshipObject.getObjectId());
-//                    ParseQuery<ParseObject> listQuery = new ParseQuery("n_shoppingLists");
-//                    listQuery.whereEqualTo("objectId", shoppingListRelationshipObject.getObjectId());
-//                    listQuery.whereEqualTo("shoppingListIsDeleted", false);
-//                    try {
-//                        List<ParseObject> listOfShoppingLists = listQuery.find();
-//                        if (listOfShoppingLists.size() > 0) {
-//                            String shoppingListName = listOfShoppingLists.get(0).getString("shoppingListName");
-//                            DataObjectShoppingList shoppingListItem = new DataObjectShoppingList(listOfShoppingLists.get(0).getObjectId(),shoppingListName, img1);
-//                            results.add(itemIndex++, shoppingListItem);
-//                        }
-//                    } catch (ParseException e1) {
-//                        e1.printStackTrace();
-//                    }
-//                }
-//            }
-//        } catch (ParseException e) {
-//            Log.i(TAG, "query: get usersListsRelationships :: Error: " + e.getMessage());
-//        }
-
 
     private void addNewShoppingList(String shoppingListName) {
 
