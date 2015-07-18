@@ -33,6 +33,13 @@ public class MyRecyclerViewShoppingListAdapter extends RecyclerView.Adapter<Shop
         mDataset = myDataset;
     }
 
+    public MyRecyclerViewShoppingListAdapter() {
+    }
+
+    public void setDataset(ArrayList<DataObjectShoppingList> myDataset){
+        mDataset = myDataset;
+    }
+
     @Override
     public ShoppingListDataObjectHolder onCreateViewHolder(ViewGroup parent,
                                                            int viewType) {

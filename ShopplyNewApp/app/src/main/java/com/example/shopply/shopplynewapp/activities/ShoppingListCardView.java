@@ -48,14 +48,14 @@ public class ShoppingListCardView extends ActionBarActivity implements IShopping
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_shopping_list_card_view);
-
+        mAdapter = new MyRecyclerViewShoppingListAdapter(getDataSet());
         getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.ActionBarColor)));
 
         mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view_shopping_list);
         mRecyclerView.setHasFixedSize(true);
         mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLayoutManager);
-        mAdapter = new MyRecyclerViewShoppingListAdapter(getDataSet());
+
         mAdapter.setShoppingListItemButtonsListener(this);
         mRecyclerView.setAdapter(mAdapter);
     }
@@ -132,32 +132,70 @@ public class ShoppingListCardView extends ActionBarActivity implements IShopping
         ParseQuery<ParseObject> query = new ParseQuery("n_usersListsRelationships");
         query.whereEqualTo("userID", ParseUser.getCurrentUser());
         query.include("listID");
-        try {
-            List<ParseObject> listOfRelationships = query.find();
-            if (listOfRelationships.size() > 0){
-                for (ParseObject listObject : listOfRelationships) {
-                    ParseObject shoppingListRelationshipObject = (ParseObject) listObject.getParseObject("listID");
-                    Log.i(TAG, "object ID = " + listObject.getObjectId() + ", listID = " + shoppingListRelationshipObject.getObjectId());
-                    ParseQuery<ParseObject> listQuery = new ParseQuery("n_shoppingLists");
-                    listQuery.whereEqualTo("objectId", shoppingListRelationshipObject.getObjectId());
-                    listQuery.whereEqualTo("shoppingListIsDeleted", false);
-                    try {
-                        List<ParseObject> listOfShoppingLists = listQuery.find();
-                        if (listOfShoppingLists.size() > 0) {
-                            String shoppingListName = listOfShoppingLists.get(0).getString("shoppingListName");
-                            DataObjectShoppingList shoppingListItem = new DataObjectShoppingList(listOfShoppingLists.get(0).getObjectId(),shoppingListName, img1);
-                            results.add(itemIndex++, shoppingListItem);
+        query.findInBackground(new FindCallback<ParseObject>() {
+
+            @Override
+            public void done(List<ParseObject> list, ParseException e) {
+                if (e == null){
+                    if (list.size() > 0 ){
+                        for (ParseObject listObject : list) {
+                            ParseObject shoppingListRelationshipObject = (ParseObject) listObject.getParseObject("listID");
+                            Log.i(TAG, "object ID = " + listObject.getObjectId() + ", listID = " + shoppingListRelationshipObject.getObjectId());
+                            ParseQuery<ParseObject> listQuery = new ParseQuery("n_shoppingLists");
+                            listQuery.whereEqualTo("objectId", shoppingListRelationshipObject.getObjectId());
+                            listQuery.whereEqualTo("shoppingListIsDeleted", false);
+                            listQuery.findInBackground(new FindCallback<ParseObject>() {
+
+                                @Override
+                                public void done(List<ParseObject> list, ParseException e) {
+                                    if (e == null) {
+                                        if (list.size() > 0) {
+                                            String shoppingListName = list.get(0).getString("shoppingListName");
+                                            DataObjectShoppingList shoppingListItem = new DataObjectShoppingList(list.get(0).getObjectId(), shoppingListName, img1);
+                                            results.add(itemIndex++, shoppingListItem);
+                                            mAdapter.notifyDataSetChanged();
+                                        }
+                                    } else {
+                                        Log.i(TAG, "query: get ListsData :: Error: " + e.getMessage());
+                                    }
+                                }
+                            });
                         }
-                    } catch (ParseException e1) {
-                        e1.printStackTrace();
+
+                        mAdapter.setDataset(results);
                     }
+                }else{
+                    Log.i(TAG, "query: get usersListsRelationships :: Error: " + e.getMessage());
                 }
             }
-        } catch (ParseException e) {
-            Log.i(TAG, "query: get usersListsRelationships :: Error: " + e.getMessage());
-        }
+        });
         return results;
     }
+//        try {
+//            List<ParseObject> listOfRelationships = query.find();
+//            if (listOfRelationships.size() > 0){
+//                for (ParseObject listObject : listOfRelationships) {
+//                    ParseObject shoppingListRelationshipObject = (ParseObject) listObject.getParseObject("listID");
+//                    Log.i(TAG, "object ID = " + listObject.getObjectId() + ", listID = " + shoppingListRelationshipObject.getObjectId());
+//                    ParseQuery<ParseObject> listQuery = new ParseQuery("n_shoppingLists");
+//                    listQuery.whereEqualTo("objectId", shoppingListRelationshipObject.getObjectId());
+//                    listQuery.whereEqualTo("shoppingListIsDeleted", false);
+//                    try {
+//                        List<ParseObject> listOfShoppingLists = listQuery.find();
+//                        if (listOfShoppingLists.size() > 0) {
+//                            String shoppingListName = listOfShoppingLists.get(0).getString("shoppingListName");
+//                            DataObjectShoppingList shoppingListItem = new DataObjectShoppingList(listOfShoppingLists.get(0).getObjectId(),shoppingListName, img1);
+//                            results.add(itemIndex++, shoppingListItem);
+//                        }
+//                    } catch (ParseException e1) {
+//                        e1.printStackTrace();
+//                    }
+//                }
+//            }
+//        } catch (ParseException e) {
+//            Log.i(TAG, "query: get usersListsRelationships :: Error: " + e.getMessage());
+//        }
+
 
     private void addNewShoppingList(String shoppingListName) {
 
@@ -204,9 +242,9 @@ public class ShoppingListCardView extends ActionBarActivity implements IShopping
             case BTN_EDIT:
                 Log.i(TAG, "BTN_EDIT " + position);
 
-                Intent mainIntent = new Intent(ShoppingListCardView.this, ItemListCardView.class);
-                mainIntent.putExtra("listObjectID", mAdapter.getObjectId(position));
-                ShoppingListCardView.this.startActivity(mainIntent);
+                Intent editIntent = new Intent(ShoppingListCardView.this, ItemListCardView.class);
+                editIntent.putExtra("listObjectID", mAdapter.getObjectId(position));
+                ShoppingListCardView.this.startActivity(editIntent);
 
                 break;
             case BTN_SHARE:
@@ -214,7 +252,9 @@ public class ShoppingListCardView extends ActionBarActivity implements IShopping
                 break;
             case BTN_ITEM_SELECTED:
                 Log.i(TAG, "BTN_ITEM_SELECTED " + position);
-
+                Intent shopIntent = new Intent(ShoppingListCardView.this, LiveShoppingCardView.class);
+                shopIntent.putExtra("listObjectID", mAdapter.getObjectId(position));
+                ShoppingListCardView.this.startActivity(shopIntent);
                 break;
         }
     }
