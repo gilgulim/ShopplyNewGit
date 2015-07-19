@@ -179,7 +179,7 @@ public class LiveShoppingCardView extends ActionBarActivity {
                             int itemTypeIndex = listOfItems.get(0).getInt("itemTypeIndex");
                             String itemQtyType = listOfItems.get(0).getString("itemQtyType");
                             img1 = itemTypeIcons.get(itemTypeIndex).getDrawable();
-                            DataObjectItem item = new DataObjectItem(itemName, img1, itemQty , (itemQtyType.equals("QTY") ? 0 : 1));
+                            DataObjectItem item = new DataObjectItem(itemObject.getObjectId(), itemName, img1, itemQty , (itemQtyType.equals("QTY") ? 0 : 1));
                             results.add(itemIndex++,item);
                         }
                     }

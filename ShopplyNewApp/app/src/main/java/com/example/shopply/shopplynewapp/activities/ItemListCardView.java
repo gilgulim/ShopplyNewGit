@@ -243,8 +243,9 @@ public class ItemListCardView extends ActionBarActivity {
                                 if (e == null){
                                     Drawable img1;
 
+                                    String itemId = listItem.getObjectId();
                                     img1 = itemTypeIcons.get(itemTypeIconsIndex).getDrawable();
-                                    DataObjectItem item = new DataObjectItem(s, img1, value , !checked ? 0 : 1);
+                                    DataObjectItem item = new DataObjectItem(itemsListsRelationships.getObjectId(), s, img1, value , !checked ? 0 : 1);
                                     ((MyRecyclerViewItemListAdapter) mAdapterItem).addItem(item, itemIndex++);
                                 }else {
                                     Log.i(TAG, "save new item failed, error = " + e.getMessage());
@@ -298,12 +299,14 @@ public class ItemListCardView extends ActionBarActivity {
                         List<ParseObject> listOfItems = itemQuery.find();
                         Log.i(TAG, "size of item of selected list result = " + listOfItems.size());
                         if(listOfItems.size() > 0 ){
+
+                            String itemId = listOfItems.get(0).getObjectId();
                             String itemName = listOfItems.get(0).getString("itemName");
                             int itemQty = listOfItems.get(0).getInt("itemQty");
                             int itemTypeIndex = listOfItems.get(0).getInt("itemTypeIndex");
                             String itemQtyType = listOfItems.get(0).getString("itemQtyType");
                             img1 = itemTypeIcons.get(itemTypeIndex).getDrawable();
-                            DataObjectItem item = new DataObjectItem(itemName, img1, itemQty , (itemQtyType.equals("QTY") ? 0 : 1));
+                            DataObjectItem item = new DataObjectItem(itemObject.getObjectId(), itemName, img1, itemQty , (itemQtyType.equals("QTY") ? 0 : 1));
                             results.add(itemIndex++,item);
                         }
                     }

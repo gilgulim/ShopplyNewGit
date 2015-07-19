@@ -8,12 +8,14 @@ import android.media.Image;
  */
 public class DataObjectItem {
 
+    private String mItemsListRelationShipId;
     private Drawable mImageItem;
     private String mItemName;
     private int mItemAmount;
     private int mItemType; //0 = QTY, 1 = KG
 
-    public DataObjectItem(String itemName, Drawable imageItem, int amount, int itemType){
+    public DataObjectItem(String itemsListRelationShipId, String itemName, Drawable imageItem, int amount, int itemType){
+        mItemsListRelationShipId = itemsListRelationShipId;
         mImageItem = imageItem;
         mItemAmount = amount;
         mItemName = itemName;
@@ -53,6 +55,9 @@ public class DataObjectItem {
         this.mItemType = mItemType;
     }
 
+    public String getmItemsListRelationShipId() {
+        return mItemsListRelationShipId;
+    }
 }
 
 
