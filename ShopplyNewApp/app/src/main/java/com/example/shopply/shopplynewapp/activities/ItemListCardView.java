@@ -245,7 +245,7 @@ public class ItemListCardView extends ActionBarActivity {
 
                                     String itemId = listItem.getObjectId();
                                     img1 = itemTypeIcons.get(itemTypeIconsIndex).getDrawable();
-                                    DataObjectItem item = new DataObjectItem(itemId, shoppingListObjectID, s, img1, value , !checked ? 0 : 1);
+                                    DataObjectItem item = new DataObjectItem(itemsListsRelationships.getObjectId(), s, img1, value , !checked ? 0 : 1);
                                     ((MyRecyclerViewItemListAdapter) mAdapterItem).addItem(item, itemIndex++);
                                 }else {
                                     Log.i(TAG, "save new item failed, error = " + e.getMessage());
@@ -306,7 +306,7 @@ public class ItemListCardView extends ActionBarActivity {
                             int itemTypeIndex = listOfItems.get(0).getInt("itemTypeIndex");
                             String itemQtyType = listOfItems.get(0).getString("itemQtyType");
                             img1 = itemTypeIcons.get(itemTypeIndex).getDrawable();
-                            DataObjectItem item = new DataObjectItem(itemId, shoppingListObjectID, itemName, img1, itemQty , (itemQtyType.equals("QTY") ? 0 : 1));
+                            DataObjectItem item = new DataObjectItem(itemObject.getObjectId(), itemName, img1, itemQty , (itemQtyType.equals("QTY") ? 0 : 1));
                             results.add(itemIndex++,item);
                         }
                     }

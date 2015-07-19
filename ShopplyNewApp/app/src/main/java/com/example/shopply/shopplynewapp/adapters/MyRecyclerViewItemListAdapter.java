@@ -12,6 +12,9 @@ import android.widget.TextView;
 import com.daimajia.swipe.SwipeLayout;
 import com.example.shopply.shopplynewapp.DataObjectItem;
 import com.example.shopply.shopplynewapp.R;
+import com.parse.DeleteCallback;
+import com.parse.FindCallback;
+import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 
@@ -142,34 +145,31 @@ public class MyRecyclerViewItemListAdapter extends RecyclerView.Adapter<MyRecycl
         DataObjectItem dataObjectItem = mDataset.get(position);
         if(dataObjectItem != null) {
 
-            String itemId = dataObjectItem.getmItemId();
-            String listId = dataObjectItem.getmListId();
+            String relationshipId = dataObjectItem.getmItemsListRelationShipId();
 
-            ParseQuery<ParseObject> query = new ParseQuery("n_items");
-            query.whereEqualTo("objectId", itemId);
+            ParseQuery<ParseObject> query = new ParseQuery("n_itemsListsRelationships");
+            query.whereEqualTo("objectId", relationshipId);
             try {
-                List<ParseObject> itemsArray = query.find();
+                query.findInBackground(new FindCallback<ParseObject>() {
+                    @Override
+                    public void done(List<ParseObject> list, ParseException e) {
+                        if(list.size() > 0){
+                            list.get(0).deleteInBackground(new DeleteCallback() {
+                                @Override
+                                public void done(ParseException e) {
+                                    Log.d("Parse", "Item with id  removed from n_itemsListsRelationships table");
+                                }
+                            });
+                        }
+                    }
+                });
 
-                query = new ParseQuery("n_shoppingLists");
-                query.whereEqualTo("objectId", listId);
-                List<ParseObject> listArray = query.find();
-
-                query = new ParseQuery("n_itemsListsRelationships");
-                query.whereEqualTo("itemId", itemsArray.get(0));
-               // query.whereEqualTo("listId", listArray.get(0));
-                List<ParseObject> listItemsToDelete = query.find();
-
-                int size = listItemsToDelete.size();
 
             } catch (Exception ex) {
 
                 String strex = ex.toString();
 
             }
-
-
-            query.whereEqualTo("itemID", itemId);
-            //query.whereEqualTo("listID", listId);
 
 
         }
