@@ -43,6 +43,8 @@ public class ShoppingListCardView extends ActionBarActivity implements IShopping
     private static final String  TAG = " > > > ShoppingLists:";
     private ArrayList results = new ArrayList<DataObjectShoppingList>();
     private int itemIndex = 0;
+    private int listBgIndex=1;
+    private static final int MAX_LIST_BG_INDEX = 5;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -136,8 +138,8 @@ public class ShoppingListCardView extends ActionBarActivity implements IShopping
 
             @Override
             public void done(List<ParseObject> list, ParseException e) {
-                if (e == null){
-                    if (list.size() > 0 ){
+                if (e == null) {
+                    if (list.size() > 0) {
                         for (ParseObject listObject : list) {
                             ParseObject shoppingListRelationshipObject = (ParseObject) listObject.getParseObject("listID");
                             Log.i(TAG, "object ID = " + listObject.getObjectId() + ", listID = " + shoppingListRelationshipObject.getObjectId());
@@ -164,7 +166,7 @@ public class ShoppingListCardView extends ActionBarActivity implements IShopping
 
                         mAdapter.setDataset(results);
                     }
-                }else{
+                } else {
                     Log.i(TAG, "query: get usersListsRelationships :: Error: " + e.getMessage());
                 }
             }
@@ -189,7 +191,7 @@ public class ShoppingListCardView extends ActionBarActivity implements IShopping
                     Drawable img1;
                     Resources res = getResources();
                     img1 = res.getDrawable(R.drawable.list_bg_supermarket);
-                    DataObjectShoppingList objSuperMarket = new DataObjectShoppingList(shoppingList.getObjectId(),name, img1);
+                    DataObjectShoppingList objSuperMarket = new DataObjectShoppingList(shoppingList.getObjectId(), name, img1);
                     ((MyRecyclerViewShoppingListAdapter) mAdapter).addItem(objSuperMarket, itemIndex++);
                 } else {
                     Log.i(TAG, "save to usersShoppingListRelationship failed, error = " + e.getMessage());
@@ -214,17 +216,23 @@ public class ShoppingListCardView extends ActionBarActivity implements IShopping
                 Log.i(TAG, "BTN_DISCARD " + position);
                 fireDeleteShoppingListDialog(position);
                 break;
+
             case BTN_EDIT:
                 Log.i(TAG, "BTN_EDIT " + position);
-
                 Intent editIntent = new Intent(ShoppingListCardView.this, ItemListCardView.class);
                 editIntent.putExtra("listObjectID", mAdapter.getObjectId(position));
                 ShoppingListCardView.this.startActivity(editIntent);
-
                 break;
+
             case BTN_SHARE:
                 Log.i(TAG, "BTN_SHARE " + position);
                 break;
+
+            case BTN_TOGGLE_BG:
+                Log.i(TAG, "BTN_TOGGLE_BG " + position);
+                toggleListBackground(position);
+                break;
+
             case BTN_ITEM_SELECTED:
                 Log.i(TAG, "BTN_ITEM_SELECTED " + position);
                 Intent shopIntent = new Intent(ShoppingListCardView.this, LiveShoppingCardView.class);
@@ -232,6 +240,33 @@ public class ShoppingListCardView extends ActionBarActivity implements IShopping
                 ShoppingListCardView.this.startActivity(shopIntent);
                 break;
         }
+    }
+
+    private void toggleListBackground(int position) {
+        if (listBgIndex >=MAX_LIST_BG_INDEX){
+            listBgIndex = 0;
+        }
+
+        Drawable bg;
+        Resources res = getResources();
+        switch(listBgIndex++){
+            case 0:
+                bg = res.getDrawable(R.drawable.list_bg_supermarket);
+                break;
+            case 1:
+                bg = res.getDrawable(R.drawable.list_bg_pharmacy);
+                break;
+            case 2:
+                bg = res.getDrawable(R.drawable.list_bg_meat);
+                break;
+            case 3:
+                bg = res.getDrawable(R.drawable.list_bg_memo);
+                break;
+            default:
+                bg = res.getDrawable(R.drawable.list_bg_simple);
+                break;
+        }
+        ((MyRecyclerViewShoppingListAdapter) mAdapter).changeItemBackground(bg, position);
     }
 
     private void fireDeleteShoppingListDialog(final int position) {

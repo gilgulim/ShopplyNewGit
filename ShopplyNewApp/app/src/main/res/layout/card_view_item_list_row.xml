@@ -1,47 +1,92 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
+    android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+
+
     <com.daimajia.swipe.SwipeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="match_parent" android:layout_height="80dp" android:id="@+id/Item_SwipeLayout">
+        android:layout_width="match_parent" android:layout_height="70dp" android:id="@+id/Item_SwipeLayout">
         <!-- Left View Start-->
-        <LinearLayout
+        <RelativeLayout
             android:background="#ffd30807"
             android:id="@+id/left_wrapper"
-            android:layout_width="160dp"
+            android:layout_width="match_parent"
             android:weightSum="1"
             android:layout_height="match_parent">
 
-            <ImageView
+            <TextView
+                android:id="@+id/textViewDeleteItem"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_marginLeft="10sp"
-                android:src="@drawable/ic_delete"
-                android:id="@+id/imageView_delete" />
-        </LinearLayout>
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textStyle="bold"
+                android:text="ITEM DELETED"
+                android:paddingLeft="10dp"
+                android:textColor="#ffffff"
+                android:layout_toRightOf="@+id/imageViewUndoDelete"
+                android:layout_centerVertical="true" />
+
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="24dp"
+                android:src="@drawable/abc_ic_clear_mtrl_alpha"
+                android:id="@+id/imageViewUndoDelete"
+
+                android:layout_centerVertical="true"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_marginLeft="17dp"
+                android:layout_marginStart="17dp" />
+
+        </RelativeLayout>
         <!-- Left View End-->
 
         <!-- Right View Start-->
         <LinearLayout
-            android:background="#ff0f8716"
             android:id="@+id/right_wrapper"
-            android:layout_width="160dp"
-            android:layout_height="match_parent"
-            android:orientation="horizontal"
-            android:layoutDirection="rtl"
-            android:weightSum="1">
 
-            <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <ImageButton
+                android:layout_weight="1"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="110dp"
-                android:layout_gravity="center_vertical"
-                android:src="@drawable/ic_checkmark"
-                android:id="@+id/imageView_checkmark" />
+                android:layout_height="match_parent"
+                android:background="#03A9F4"
+                android:id="@+id/imageViewColor1" />
+            <ImageButton
+                android:layout_weight="1"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:background="#00BCD4"
+                android:id="@+id/imageViewColor2" />
+            <ImageButton
+                android:layout_weight="1"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:background="#009688"
+                android:id="@+id/imageViewColor3" />
+            <ImageButton
+                android:layout_weight="1"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:background="#4CAF50"
+                android:id="@+id/imageViewColor4" />
+            <ImageButton
+                android:layout_weight="1"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:background="#8BC34A"
+                android:id="@+id/imageViewColor5" />
+            <ImageButton
+                android:layout_weight="1"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:background="#CDDC39"
+                android:id="@+id/imageViewColor6" />
 
         </LinearLayout>
         <!-- Right View End-->
@@ -50,15 +95,23 @@
         <android.support.v7.widget.CardView
             android:id="@+id/card_view_item"
             android:layout_gravity="center"
-            android:layout_width="fill_parent"
+            android:layout_width="match_parent"
             android:layout_height="70dp"
-            card_view:contentPadding="10dp"
+
             android:layout_margin="1dp"
             card_view:cardCornerRadius="0dp">
 
             <RelativeLayout
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent">
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <ImageView
+                    android:layout_width="16dp"
+                    android:layout_height="match_parent"
+                    android:id="@+id/imageViewCategoryColor"
+                    android:background="#CDDC39"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true" />
 
                 <ImageView
                     android:layout_width="32dp"
@@ -102,9 +155,10 @@
                     android:layout_alignParentEnd="true" />
 
             </RelativeLayout>
-        </android.support.v7.widget.CardView>
-        <!-- Surface View Start -->
-    </com.daimajia.swipe.SwipeLayout>
 
+        </android.support.v7.widget.CardView>
+        <!-- Surface View Ends -->
+
+    </com.daimajia.swipe.SwipeLayout>
 
 </LinearLayout>

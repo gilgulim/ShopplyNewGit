@@ -18,6 +18,7 @@ import android.widget.TextView;
 import com.example.shopply.shopplynewapp.DataObjectItem;
 import com.example.shopply.shopplynewapp.R;
 import com.example.shopply.shopplynewapp.adapters.MyRecyclerViewItemListAdapter;
+import com.example.shopply.shopplynewapp.adapters.MyRecyclerViewLiveShoppingItemListAdapter;
 import com.facebook.appevents.AppEventsLogger;
 import com.parse.FindCallback;
 import com.parse.ParseException;
@@ -55,12 +56,12 @@ public class LiveShoppingCardView extends ActionBarActivity {
         shoppingListObjectID = getIntent().getStringExtra("listObjectID");
         Log.i(TAG, "item ID = " + R.id.my_recycler_view_item);
 
-        mRecyclerViewItem = (RecyclerView) findViewById(R.id.my_recycler_view_item);
+        mRecyclerViewItem = (RecyclerView) findViewById(R.id.my_recycler_view_live_shopping_item);
         mRecyclerViewItem.setHasFixedSize(true);
         mLayoutManagerItem = new LinearLayoutManager(this);
         mRecyclerViewItem.setLayoutManager(mLayoutManagerItem);
 
-        mAdapterItem = new MyRecyclerViewItemListAdapter(getDataSet());
+        mAdapterItem = new MyRecyclerViewLiveShoppingItemListAdapter(getDataSet());
         mRecyclerViewItem.setAdapter(mAdapterItem);
 
         shoppingClock = (TextView) findViewById(R.id.textViewTime);
@@ -101,7 +102,7 @@ public class LiveShoppingCardView extends ActionBarActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        ((MyRecyclerViewItemListAdapter) mAdapterItem).setOnItemClickListener(new MyRecyclerViewItemListAdapter.MyClickListener() {
+        ((MyRecyclerViewLiveShoppingItemListAdapter) mAdapterItem).setOnItemClickListener(new MyRecyclerViewLiveShoppingItemListAdapter.MyClickListener() {
             @Override
             public void onItemClick(int position, View v) {
                 Log.i(TAG, " Clicked on Item " + position);
@@ -150,10 +151,10 @@ public class LiveShoppingCardView extends ActionBarActivity {
     }
 
     private ArrayList<DataObjectItem> getDataSet() {
-        Drawable img1;
+        //Drawable img1;
         li = LayoutInflater.from(this);
         promptsView = li.inflate(R.layout.new_item_dialog, null);
-        ArrayList<ImageButton> itemTypeIcons = getItemTypeIconsImageViewArray(promptsView);
+        //ArrayList<ImageButton> itemTypeIcons = getItemTypeIconsImageViewArray(promptsView);
 
         final ParseQuery<ParseObject> shoppingListObject = ParseQuery.getQuery("n_shoppingLists");
         shoppingListObject.whereEqualTo("objectId", shoppingListObjectID);
@@ -176,10 +177,11 @@ public class LiveShoppingCardView extends ActionBarActivity {
                         if(listOfItems.size() > 0 ){
                             String itemName = listOfItems.get(0).getString("itemName");
                             int itemQty = listOfItems.get(0).getInt("itemQty");
-                            int itemTypeIndex = listOfItems.get(0).getInt("itemTypeIndex");
+                            //int itemTypeIndex = listOfItems.get(0).getInt("itemTypeIndex");
+                            String itemCategoryColor = listOfItems.get(0).getString("itemCategoryColor");
                             String itemQtyType = listOfItems.get(0).getString("itemQtyType");
-                            img1 = itemTypeIcons.get(itemTypeIndex).getDrawable();
-                            DataObjectItem item = new DataObjectItem(itemObject.getObjectId(), itemName, img1, itemQty , (itemQtyType.equals("QTY") ? 0 : 1));
+                            //img1 = itemTypeIcons.get(itemTypeIndex).getDrawable();
+                            DataObjectItem item = new DataObjectItem(itemObject.getObjectId(), itemName, itemCategoryColor, itemQty , (itemQtyType.equals("QTY") ? 0 : 1));
                             results.add(itemIndex++,item);
                         }
                     }

@@ -86,6 +86,7 @@ public class ItemListCardView extends ActionBarActivity {
         shoppingListObject.findInBackground(new FindCallback<ParseObject>() {
             @Override
             public void done(List<ParseObject> list, ParseException e) {
+
                 if (e == null) {
                     if (list.size() > 0) {
                         setTitle(list.get(0).getString("shoppingListName"));
@@ -116,16 +117,15 @@ public class ItemListCardView extends ActionBarActivity {
     }
     private void fireNewItemDialog() {
         //default itemCategoryIndex
-        itemTypeIconsIndex=0;
+        //itemTypeIconsIndex=0;
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
         if(promptsView.getParent()!=null){
             //create new view for dialog
             promptsView = li.inflate(R.layout.new_item_dialog, null);
         }
         alertDialogBuilder.setView(promptsView);
-        final ArrayList<ImageButton> itemTypeIcons = getItemTypeIconsImageViewArray(promptsView);
 
-
+      /*  final ArrayList<ImageButton> itemTypeIcons = getItemTypeIconsImageViewArray(promptsView);
         final ImageView previewIcon = (ImageView)promptsView.findViewById(R.id.imageViewPreview);
         previewIcon.setColorFilter(Color.parseColor("#9DC709"));
         for(final ImageButton imageView:itemTypeIcons){
@@ -136,7 +136,7 @@ public class ItemListCardView extends ActionBarActivity {
                    itemTypeIconsIndex = itemTypeIcons.indexOf(imageView);
                }
            });
-        }
+        }*/
         final EditText itemName = (EditText) promptsView.findViewById(R.id.editTextNewItemName);
         final ToggleButton itemQtyType = (ToggleButton) promptsView
                 .findViewById(R.id.toggleButtonItemQtyType);
@@ -152,7 +152,7 @@ public class ItemListCardView extends ActionBarActivity {
                 .setPositiveButton("OK",
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog,int id) {
-                                addNewItem(itemTypeIcons, itemTypeIconsIndex, String.valueOf(
+                                addNewItem("#CDDC39", itemTypeIconsIndex, String.valueOf(
                                         itemName.getText())
                                         , itemQtyType.isChecked()
                                         , itemQty.getValue());
@@ -172,6 +172,7 @@ public class ItemListCardView extends ActionBarActivity {
                 WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
         alertDialog.show();
     }
+/*
 
     private ArrayList<ImageButton> getItemTypeIconsImageViewArray(View promptsView) {
         ArrayList<ImageButton> itemTypeIcons = new ArrayList<ImageButton>();
@@ -217,14 +218,15 @@ public class ItemListCardView extends ActionBarActivity {
         return itemTypeIcons;
     }
 
-    private void addNewItem(final ArrayList<ImageButton> itemTypeIcons, int iconTypeIndex, final String s, final boolean checked
+*/
+    private void addNewItem(final String itemCategoryColor, int iconTypeIndex, final String s, final boolean checked
             , final int value) {
 
         final ParseObject listItem = new ParseObject("n_items");
         listItem.put("itemName", s);
         listItem.put("itemQty", value);
         listItem.put("itemQtyType", (!checked ? "QTY" : "KG"));
-        listItem.put("itemTypeIndex", iconTypeIndex);
+        listItem.put("itemCategoryColor", itemCategoryColor);
 
         final ParseQuery<ParseObject> shoppingListObject = ParseQuery.getQuery("n_shoppingLists");
         shoppingListObject.whereEqualTo("objectId", shoppingListObjectID);
@@ -241,11 +243,11 @@ public class ItemListCardView extends ActionBarActivity {
                             @Override
                             public void done(ParseException e) {
                                 if (e == null){
-                                    Drawable img1;
+                                    //Drawable img1;
 
                                     String itemId = listItem.getObjectId();
-                                    img1 = itemTypeIcons.get(itemTypeIconsIndex).getDrawable();
-                                    DataObjectItem item = new DataObjectItem(itemsListsRelationships.getObjectId(), s, img1, value , !checked ? 0 : 1);
+                                    //img1 = itemTypeIcons.get(itemTypeIconsIndex).getDrawable();
+                                    DataObjectItem item = new DataObjectItem(listItem.getObjectId(), s, itemCategoryColor, value , !checked ? 0 : 1);
                                     ((MyRecyclerViewItemListAdapter) mAdapterItem).addItem(item, itemIndex++);
                                 }else {
                                     Log.i(TAG, "save new item failed, error = " + e.getMessage());
@@ -275,10 +277,10 @@ public class ItemListCardView extends ActionBarActivity {
     }
 
     private ArrayList<DataObjectItem> getDataSet() {
-        Drawable img1;
+        //Drawable img1;
         li = LayoutInflater.from(this);
         promptsView = li.inflate(R.layout.new_item_dialog, null);
-        ArrayList<ImageButton> itemTypeIcons = getItemTypeIconsImageViewArray(promptsView);
+        //ArrayList<ImageButton> itemTypeIcons = getItemTypeIconsImageViewArray(promptsView);
 
         final ParseQuery<ParseObject> shoppingListObject = ParseQuery.getQuery("n_shoppingLists");
         shoppingListObject.whereEqualTo("objectId", shoppingListObjectID);
@@ -305,8 +307,9 @@ public class ItemListCardView extends ActionBarActivity {
                             int itemQty = listOfItems.get(0).getInt("itemQty");
                             int itemTypeIndex = listOfItems.get(0).getInt("itemTypeIndex");
                             String itemQtyType = listOfItems.get(0).getString("itemQtyType");
-                            img1 = itemTypeIcons.get(itemTypeIndex).getDrawable();
-                            DataObjectItem item = new DataObjectItem(itemObject.getObjectId(), itemName, img1, itemQty , (itemQtyType.equals("QTY") ? 0 : 1));
+                            String itemCategoryColor = listOfItems.get(0).getString("itemCategoryColor");
+                            //img1 = itemTypeIcons.get(itemTypeIndex).getDrawable();
+                            DataObjectItem item = new DataObjectItem(itemObject.getObjectId(), itemName, itemCategoryColor, itemQty , (itemQtyType.equals("QTY") ? 0 : 1));
                             results.add(itemIndex++,item);
                         }
                     }
