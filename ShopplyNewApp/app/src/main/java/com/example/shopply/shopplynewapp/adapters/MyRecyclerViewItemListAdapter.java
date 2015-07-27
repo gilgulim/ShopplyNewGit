@@ -254,9 +254,9 @@ public class MyRecyclerViewItemListAdapter extends RecyclerView.Adapter<MyRecycl
 
     }
 
-    public void addItem(DataObjectItem dataObj, int index) {
-        mDataset.add(index, dataObj);
-        notifyItemInserted(index);
+    public void addItem(DataObjectItem dataObj) {
+        mDataset.add(dataObj);
+        notifyDataSetChanged();
     }
 
 

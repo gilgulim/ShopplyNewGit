@@ -248,7 +248,7 @@ public class ItemListCardView extends ActionBarActivity {
                                     String itemId = listItem.getObjectId();
                                     //img1 = itemTypeIcons.get(itemTypeIconsIndex).getDrawable();
                                     DataObjectItem item = new DataObjectItem(listItem.getObjectId(), s, itemCategoryColor, value , !checked ? 0 : 1);
-                                    ((MyRecyclerViewItemListAdapter) mAdapterItem).addItem(item, itemIndex++);
+                                    ((MyRecyclerViewItemListAdapter) mAdapterItem).addItem(item);
                                 }else {
                                     Log.i(TAG, "save new item failed, error = " + e.getMessage());
                                 }
@@ -310,7 +310,7 @@ public class ItemListCardView extends ActionBarActivity {
                             String itemCategoryColor = listOfItems.get(0).getString("itemCategoryColor");
                             //img1 = itemTypeIcons.get(itemTypeIndex).getDrawable();
                             DataObjectItem item = new DataObjectItem(itemObject.getObjectId(), itemName, itemCategoryColor, itemQty , (itemQtyType.equals("QTY") ? 0 : 1));
-                            results.add(itemIndex++,item);
+                            results.add(item);
                         }
                     }
                 }
