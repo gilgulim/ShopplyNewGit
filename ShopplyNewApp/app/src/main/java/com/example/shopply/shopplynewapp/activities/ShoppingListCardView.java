@@ -22,6 +22,9 @@ import com.example.shopply.shopplynewapp.DataObjectShoppingList;
 import com.example.shopply.shopplynewapp.R;
 import com.example.shopply.shopplynewapp.adapters.IShoppingListButtonsListener;
 import com.example.shopply.shopplynewapp.adapters.MyRecyclerViewShoppingListAdapter;
+import com.facebook.AccessToken;
+import com.facebook.GraphRequest;
+import com.facebook.GraphResponse;
 import com.facebook.appevents.AppEventsLogger;
 import com.parse.FindCallback;
 import com.parse.ParseException;
@@ -29,6 +32,8 @@ import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
+
+import org.json.JSONArray;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -136,8 +141,8 @@ public class ShoppingListCardView extends ActionBarActivity implements IShopping
 
             @Override
             public void done(List<ParseObject> list, ParseException e) {
-                if (e == null){
-                    if (list.size() > 0 ){
+                if (e == null) {
+                    if (list.size() > 0) {
                         for (ParseObject listObject : list) {
                             ParseObject shoppingListRelationshipObject = (ParseObject) listObject.getParseObject("listID");
                             Log.i(TAG, "object ID = " + listObject.getObjectId() + ", listID = " + shoppingListRelationshipObject.getObjectId());
@@ -164,7 +169,7 @@ public class ShoppingListCardView extends ActionBarActivity implements IShopping
 
                         mAdapter.setDataset(results);
                     }
-                }else{
+                } else {
                     Log.i(TAG, "query: get usersListsRelationships :: Error: " + e.getMessage());
                 }
             }
@@ -189,7 +194,7 @@ public class ShoppingListCardView extends ActionBarActivity implements IShopping
                     Drawable img1;
                     Resources res = getResources();
                     img1 = res.getDrawable(R.drawable.list_bg_supermarket);
-                    DataObjectShoppingList objSuperMarket = new DataObjectShoppingList(shoppingList.getObjectId(),name, img1);
+                    DataObjectShoppingList objSuperMarket = new DataObjectShoppingList(shoppingList.getObjectId(), name, img1);
                     ((MyRecyclerViewShoppingListAdapter) mAdapter).addItem(objSuperMarket, itemIndex++);
                 } else {
                     Log.i(TAG, "save to usersShoppingListRelationship failed, error = " + e.getMessage());
@@ -224,6 +229,10 @@ public class ShoppingListCardView extends ActionBarActivity implements IShopping
                 break;
             case BTN_SHARE:
                 Log.i(TAG, "BTN_SHARE " + position);
+
+                Intent intent = new Intent(ShoppingListCardView.this, FacebookFriendsListView.class);
+                ShoppingListCardView.this.startActivity(intent);
+
                 break;
             case BTN_ITEM_SELECTED:
                 Log.i(TAG, "BTN_ITEM_SELECTED " + position);
@@ -250,7 +259,7 @@ public class ShoppingListCardView extends ActionBarActivity implements IShopping
                     })
                     .setNegativeButton("Cancel",
                             new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog,int id) {
+                                public void onClick(DialogInterface dialog, int id) {
                                     dialog.cancel();
                                 }
                             });
@@ -269,20 +278,20 @@ public class ShoppingListCardView extends ActionBarActivity implements IShopping
         query.findInBackground(new FindCallback<ParseObject>() {
             @Override
             public void done(List<ParseObject> list, ParseException e) {
-                if (e == null){
-                    if (list.size() > 0 ){
+                if (e == null) {
+                    if (list.size() > 0) {
                         list.get(0).put("shoppingListIsDeleted", true);
                         list.get(0).saveInBackground(new SaveCallback() {
                             @Override
                             public void done(ParseException e) {
-                                if (e != null){
-                                    Log.i(TAG,"onShoppingListButtonClicked() save list update failed, error = " + e.getMessage());
+                                if (e != null) {
+                                    Log.i(TAG, "onShoppingListButtonClicked() save list update failed, error = " + e.getMessage());
                                 }
                             }
                         });
                     }
-                }else{
-                    Log.i(TAG,"onShoppingListButtonClicked() get list failed, error = " + e.getMessage());
+                } else {
+                    Log.i(TAG, "onShoppingListButtonClicked() get list failed, error = " + e.getMessage());
                 }
             }
         });

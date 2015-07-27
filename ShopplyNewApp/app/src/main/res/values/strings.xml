@@ -17,5 +17,6 @@
     <string name="item_type_kg">KG</string>
     <string name="facebook_app_id">1598865660364542</string>
     <string name="title_activity_live_shopping_card_view">LiveShoppingCardView</string>
+    <string name="title_activity_facebook_friends_list_view">FacebookFriendsListView</string>
 
 </resources>
