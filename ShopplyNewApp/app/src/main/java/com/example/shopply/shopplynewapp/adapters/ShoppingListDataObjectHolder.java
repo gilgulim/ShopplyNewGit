@@ -21,6 +21,7 @@ public class ShoppingListDataObjectHolder extends RecyclerView.ViewHolder
     private ImageView imgView_Edit;
     private ImageView imgView_share;
     private ImageView imgView_discard;
+    private ImageView imgView_toggleBgImage;
     private IShoppingListButtonsListener mShoppingListButtonListener;
 
     public ShoppingListDataObjectHolder(View itemView) {
@@ -29,10 +30,20 @@ public class ShoppingListDataObjectHolder extends RecyclerView.ViewHolder
 
         lbl_shoppingListTitle = (TextView) itemView.findViewById(R.id.lbl_shoppingListTitle);
         imgView_shoppingListBgImage = (ImageView) itemView.findViewById(R.id.imgView_shoppingListBgImage);
-
         imgView_discard = (ImageView) itemView.findViewById(R.id.imgView_discard);
         imgView_Edit = (ImageView) itemView.findViewById(R.id.imgView_Edit);
         imgView_share = (ImageView) itemView.findViewById(R.id.imgView_share);
+        imgView_toggleBgImage = (ImageView) itemView.findViewById(R.id.imgViewToggleBG);
+
+
+        imgView_shoppingListBgImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(mShoppingListButtonListener!= null) {
+                    mShoppingListButtonListener.onShoppingListButtonClicked(IShoppingListButtonsListener.ShoppingListButtonType.BTN_ITEM_SELECTED, getPosition());
+                }
+            }
+        });
         imgView_share.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -51,6 +62,15 @@ public class ShoppingListDataObjectHolder extends RecyclerView.ViewHolder
             }
         });
 
+        imgView_toggleBgImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (mShoppingListButtonListener != null) {
+                    mShoppingListButtonListener.onShoppingListButtonClicked(IShoppingListButtonsListener.ShoppingListButtonType.BTN_TOGGLE_BG, getPosition());
+                }
+            }
+        });
+
         imgView_discard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -65,9 +85,9 @@ public class ShoppingListDataObjectHolder extends RecyclerView.ViewHolder
 
     @Override
     public void onClick(View v) {
-        if(mShoppingListButtonListener != null) {
+/*        if(mShoppingListButtonListener != null) {
             mShoppingListButtonListener.onShoppingListButtonClicked(IShoppingListButtonsListener.ShoppingListButtonType.BTN_ITEM_SELECTED, getPosition());
-        }
+        }*/
     }
 
     public void setShoppingListTitle(String title){

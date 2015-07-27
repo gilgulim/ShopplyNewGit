@@ -7,28 +7,42 @@ import android.media.Image;
  * Created by Gilp on 16/05/2015.
  */
 public class DataObjectItem {
-
+    private String mItemId;
     private String mItemsListRelationShipId;
-    private Drawable mImageItem;
     private String mItemName;
+    private String mItemCategoryColor;
     private int mItemAmount;
     private int mItemType; //0 = QTY, 1 = KG
 
-    public DataObjectItem(String itemsListRelationShipId, String itemName, Drawable imageItem, int amount, int itemType){
+    public DataObjectItem(String itemsListRelationShipId, String itemId, String itemName, String itemCategryColor, int amount, int itemType){
+        this(itemId,itemName,itemCategryColor,amount,itemType);
         mItemsListRelationShipId = itemsListRelationShipId;
-        mImageItem = imageItem;
+
+
+    }
+
+    public DataObjectItem(String itemId, String itemName, String itemCategryColor, int amount, int itemType){
+        mItemId = itemId;
+        mItemCategoryColor = itemCategryColor;
         mItemAmount = amount;
         mItemName = itemName;
         mItemType = itemType;
 
     }
-
-    public Drawable getmImageItem() {
-        return mImageItem;
+    public String getmItemId() {
+        return mItemId;
     }
 
-    public void setmImageItem(Drawable mImageItem) {
-        this.mImageItem = mImageItem;
+    public void setmItemId(String mItemId) {
+        this.mItemId = mItemId;
+    }
+
+    public String getmItemCategoryColor() {
+        return mItemCategoryColor;
+    }
+
+    public void setmItemCategoryColor(String mItemCategoryColor) {
+        this.mItemCategoryColor = mItemCategoryColor;
     }
 
     public String getmItemName() {

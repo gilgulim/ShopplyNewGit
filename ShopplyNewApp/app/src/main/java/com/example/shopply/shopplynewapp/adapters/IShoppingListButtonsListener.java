@@ -10,6 +10,7 @@ public interface IShoppingListButtonsListener {
         BTN_DISCARD,
         BTN_EDIT,
         BTN_SHARE,
+        BTN_TOGGLE_BG
     }
     void onShoppingListButtonClicked(ShoppingListButtonType buttonType, int position);
 }

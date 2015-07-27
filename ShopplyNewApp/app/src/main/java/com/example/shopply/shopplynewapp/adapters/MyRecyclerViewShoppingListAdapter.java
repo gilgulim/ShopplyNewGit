@@ -2,6 +2,7 @@ package com.example.shopply.shopplynewapp.adapters;
 
 import android.annotation.TargetApi;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -57,6 +58,10 @@ public class MyRecyclerViewShoppingListAdapter extends RecyclerView.Adapter<Shop
         holder.setShoppingListImage(mDataset.get(position).getmImageCategory());
     }
 
+    public void changeItemBackground(Drawable img,int index){
+        mDataset.get(index).setmImageCategory(img);
+        notifyItemChanged(index);
+    }
 
     public void addItem(DataObjectShoppingList dataObj, int index) {
         mDataset.add(dataObj);
@@ -69,6 +74,7 @@ public class MyRecyclerViewShoppingListAdapter extends RecyclerView.Adapter<Shop
     public void deleteItem(int index) {
         mDataset.remove(index);
         notifyItemRemoved(index);
+
     }
 
     public void setShoppingListItemButtonsListener(IShoppingListButtonsListener shoppingListItemButtonsListener){
