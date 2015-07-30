@@ -2,7 +2,6 @@ package com.example.shopply.shopplynewapp.activities;
 
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -15,9 +14,8 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
-import com.example.shopply.shopplynewapp.DataObjectItem;
+import com.example.shopply.shopplynewapp.dataObjects.DataObjectItem;
 import com.example.shopply.shopplynewapp.R;
-import com.example.shopply.shopplynewapp.adapters.MyRecyclerViewItemListAdapter;
 import com.example.shopply.shopplynewapp.adapters.MyRecyclerViewLiveShoppingItemListAdapter;
 import com.facebook.appevents.AppEventsLogger;
 import com.parse.FindCallback;

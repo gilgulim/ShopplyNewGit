@@ -3,6 +3,7 @@ package com.example.shopply.shopplynewapp.activities;
 import android.content.Context;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -22,27 +23,15 @@ import java.util.List;
 
 public class FacebookFriendsListView extends ActionBarActivity {
 
+    private RecyclerView mRecyclerViewItem;
+    private RecyclerView.Adapter mAdapterItem;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_facebook_friends_list_view);
+        mRecyclerViewItem = (RecyclerView)findViewById(R.id.fbFriendsRecycleView);
 
-        ListView listView = (ListView) findViewById(R.id.fbFriendsList);
-
-        String[] values = new String[] { "Android", "iPhone", "WindowsMobile",
-                "Blackberry", "WebOS", "Ubuntu", "Windows7", "Max OS X",
-                "Linux", "OS/2", "Ubuntu", "Windows7", "Max OS X", "Linux",
-                "OS/2", "Ubuntu", "Windows7", "Max OS X", "Linux", "OS/2",
-                "Android", "iPhone", "WindowsMobile" };
-
-        final ArrayList<String> list = new ArrayList<String>();
-        for (int i = 0; i < values.length; ++i) {
-            list.add(values[i]);
-        }
-
-        final StableArrayAdapter adapter = new StableArrayAdapter(this,
-                android.R.layout.simple_list_item_1, list);
-        listView.setAdapter(adapter);
 
         getFriendsList();
     }
@@ -81,6 +70,9 @@ public class FacebookFriendsListView extends ActionBarActivity {
                     }
                 }
         );
+        Bundle parameters = new Bundle();
+        parameters.putString("fields", "id,name,picture");
+        request.setParameters(parameters);
         request.executeAsync();
 
     }

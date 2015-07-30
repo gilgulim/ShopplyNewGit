@@ -1,29 +1,22 @@
 package com.example.shopply.shopplynewapp.adapters;
 
 
-import android.content.Intent;
 import android.graphics.Color;
-import android.graphics.Point;
 import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
-import android.media.Image;
 import android.os.Handler;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.daimajia.swipe.SwipeLayout;
-import com.example.shopply.shopplynewapp.DataObjectItem;
+import com.example.shopply.shopplynewapp.dataObjects.DataObjectItem;
 import com.example.shopply.shopplynewapp.R;
-import com.example.shopply.shopplynewapp.activities.Login;
 import com.parse.DeleteCallback;
 import com.parse.FindCallback;
 import com.parse.GetCallback;
@@ -38,14 +31,14 @@ import java.util.List;
 /**
  * Created by Gilp on 16/05/2015.
  */
-public class MyRecyclerViewItemListAdapter extends RecyclerView.Adapter<MyRecyclerViewItemListAdapter.DataObjectHolder> implements RemoveItemListener{
+public class MyRecyclerViewItemListAdapter extends RecyclerView.Adapter<MyRecyclerViewItemListAdapter.ItemListDataObjectHolder> implements RemoveItemListener{
 
     private static String LOG_TAG = "MyRecyclerViewItemListAdapter";
     private static ArrayList<DataObjectItem> mDataset;
     private static MyClickListener myClickListener;
     private static final int SWIPE_DELAY_TIME = 1500;
 
-    public static class DataObjectHolder extends RecyclerView.ViewHolder
+    public static class ItemListDataObjectHolder extends RecyclerView.ViewHolder
             implements View
             .OnClickListener {
 
@@ -58,7 +51,7 @@ public class MyRecyclerViewItemListAdapter extends RecyclerView.Adapter<MyRecycl
         SwipeLayout swipeLayout;
 
 
-        public DataObjectHolder(final View itemView) {
+        public ItemListDataObjectHolder(final View itemView) {
             super(itemView);
             itemDeleted = (TextView) itemView.findViewById(R.id.textViewDeleteItem);
 
@@ -184,17 +177,17 @@ public class MyRecyclerViewItemListAdapter extends RecyclerView.Adapter<MyRecycl
     }
 
     @Override
-    public DataObjectHolder onCreateViewHolder(ViewGroup parent,
+    public ItemListDataObjectHolder onCreateViewHolder(ViewGroup parent,
                                                int viewType) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.card_view_item_list_row, parent, false);
 
-        DataObjectHolder dataObjectHolder = new DataObjectHolder(view);
+        ItemListDataObjectHolder dataObjectHolder = new ItemListDataObjectHolder(view);
         return dataObjectHolder;
     }
 
     @Override
-    public void onBindViewHolder(DataObjectHolder holder, int position) {
+    public void onBindViewHolder(ItemListDataObjectHolder holder, int position) {
         holder.itemName.setText(mDataset.get(position).getmItemName());
         holder.removeItemListener = this;
 

@@ -18,13 +18,10 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.EditText;
 
-import com.example.shopply.shopplynewapp.DataObjectShoppingList;
+import com.example.shopply.shopplynewapp.dataObjects.DataObjectShoppingList;
 import com.example.shopply.shopplynewapp.R;
 import com.example.shopply.shopplynewapp.adapters.IShoppingListButtonsListener;
 import com.example.shopply.shopplynewapp.adapters.MyRecyclerViewShoppingListAdapter;
-import com.facebook.AccessToken;
-import com.facebook.GraphRequest;
-import com.facebook.GraphResponse;
 import com.facebook.appevents.AppEventsLogger;
 import com.parse.FindCallback;
 import com.parse.ParseException;
@@ -32,8 +29,6 @@ import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
-
-import org.json.JSONArray;
 
 import java.util.ArrayList;
 import java.util.List;

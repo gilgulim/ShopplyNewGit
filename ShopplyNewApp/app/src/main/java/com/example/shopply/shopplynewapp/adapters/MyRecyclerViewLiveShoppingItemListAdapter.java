@@ -2,7 +2,6 @@ package com.example.shopply.shopplynewapp.adapters;
 
 
 import android.graphics.Color;
-import android.media.Image;
 import android.os.Handler;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -14,7 +13,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.daimajia.swipe.SwipeLayout;
-import com.example.shopply.shopplynewapp.DataObjectItem;
+import com.example.shopply.shopplynewapp.dataObjects.DataObjectItem;
 import com.example.shopply.shopplynewapp.R;
 import com.parse.DeleteCallback;
 import com.parse.FindCallback;

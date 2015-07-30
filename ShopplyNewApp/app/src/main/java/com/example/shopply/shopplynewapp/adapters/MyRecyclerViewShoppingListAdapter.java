@@ -1,21 +1,13 @@
 package com.example.shopply.shopplynewapp.adapters;
 
-import android.annotation.TargetApi;
-import android.content.Intent;
 import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
 
-import com.example.shopply.shopplynewapp.DataObjectShoppingList;
+import com.example.shopply.shopplynewapp.dataObjects.DataObjectShoppingList;
 import com.example.shopply.shopplynewapp.R;
-import com.example.shopply.shopplynewapp.activities.ItemListCardView;
-import com.example.shopply.shopplynewapp.activities.ShoppingListCardView;
 
 import java.util.ArrayList;
 

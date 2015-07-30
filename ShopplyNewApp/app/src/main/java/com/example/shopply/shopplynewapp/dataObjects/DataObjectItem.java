@@ -1,4 +1,4 @@
-package com.example.shopply.shopplynewapp;
+package com.example.shopply.shopplynewapp.dataObjects;
 
 import android.graphics.drawable.Drawable;
 import android.media.Image;

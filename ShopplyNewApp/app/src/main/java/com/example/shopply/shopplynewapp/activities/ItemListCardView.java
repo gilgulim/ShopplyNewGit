@@ -2,10 +2,7 @@ package com.example.shopply.shopplynewapp.activities;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
-import android.media.Image;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -17,13 +14,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.NumberPicker;
-import android.widget.Toast;
 import android.widget.ToggleButton;
 
-import com.example.shopply.shopplynewapp.DataObjectItem;
+import com.example.shopply.shopplynewapp.dataObjects.DataObjectItem;
 import com.example.shopply.shopplynewapp.R;
 import com.example.shopply.shopplynewapp.adapters.MyRecyclerViewItemListAdapter;
 import com.facebook.appevents.AppEventsLogger;
@@ -46,7 +40,6 @@ public class ItemListCardView extends ActionBarActivity {
     private static String TAG = " > > > ShoppingListEditMode:";
     private String shoppingListObjectID;
     private ArrayList results = new ArrayList<DataObjectItem>();
-    private int itemIndex = 0;
     private LayoutInflater li;
     private View promptsView;
 
