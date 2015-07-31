@@ -12,9 +12,7 @@ import com.example.shopply.shopplynewapp.R;
  * Created by Evyatar on 02/06/2015.
  */
 
-public class ShoppingListDataObjectHolder extends RecyclerView.ViewHolder
-        implements View.OnClickListener {
-
+public class ShoppingListDataObjectHolder extends RecyclerView.ViewHolder {
 
     private ImageView imgView_shoppingListBgImage;
     private TextView lbl_shoppingListTitle;
@@ -40,7 +38,9 @@ public class ShoppingListDataObjectHolder extends RecyclerView.ViewHolder
             @Override
             public void onClick(View view) {
                 if(mShoppingListButtonListener!= null) {
-                    mShoppingListButtonListener.onShoppingListButtonClicked(IShoppingListButtonsListener.ShoppingListButtonType.BTN_ITEM_SELECTED, getPosition());
+                    mShoppingListButtonListener.onShoppingListButtonClicked(
+                            IShoppingListButtonsListener.ShoppingListButtonType.BTN_ITEM_SELECTED,
+                            getPosition());
                 }
             }
         });
@@ -48,7 +48,9 @@ public class ShoppingListDataObjectHolder extends RecyclerView.ViewHolder
             @Override
             public void onClick(View view) {
                 if(mShoppingListButtonListener!= null) {
-                    mShoppingListButtonListener.onShoppingListButtonClicked(IShoppingListButtonsListener.ShoppingListButtonType.BTN_SHARE, getPosition());
+                    mShoppingListButtonListener.onShoppingListButtonClicked(
+                            IShoppingListButtonsListener.ShoppingListButtonType.BTN_SHARE,
+                            getPosition());
                 }
             }
         });
@@ -57,7 +59,9 @@ public class ShoppingListDataObjectHolder extends RecyclerView.ViewHolder
             @Override
             public void onClick(View view) {
                 if(mShoppingListButtonListener!= null) {
-                    mShoppingListButtonListener.onShoppingListButtonClicked(IShoppingListButtonsListener.ShoppingListButtonType.BTN_EDIT, getPosition());
+                    mShoppingListButtonListener.onShoppingListButtonClicked(
+                            IShoppingListButtonsListener.ShoppingListButtonType.BTN_EDIT,
+                            getPosition());
                 }
             }
         });
@@ -66,7 +70,9 @@ public class ShoppingListDataObjectHolder extends RecyclerView.ViewHolder
             @Override
             public void onClick(View view) {
                 if (mShoppingListButtonListener != null) {
-                    mShoppingListButtonListener.onShoppingListButtonClicked(IShoppingListButtonsListener.ShoppingListButtonType.BTN_TOGGLE_BG, getPosition());
+                    mShoppingListButtonListener.onShoppingListButtonClicked(
+                            IShoppingListButtonsListener.ShoppingListButtonType.BTN_TOGGLE_BG,
+                            getPosition());
                 }
             }
         });
@@ -75,20 +81,15 @@ public class ShoppingListDataObjectHolder extends RecyclerView.ViewHolder
             @Override
             public void onClick(View view) {
                 if (mShoppingListButtonListener != null) {
-                    mShoppingListButtonListener.onShoppingListButtonClicked(IShoppingListButtonsListener.ShoppingListButtonType.BTN_DISCARD, getPosition());
+                    mShoppingListButtonListener.onShoppingListButtonClicked(
+                            IShoppingListButtonsListener.ShoppingListButtonType.BTN_DISCARD,
+                            getPosition());
                 }
             }
         });
 
-        itemView.setOnClickListener(this);
     }
 
-    @Override
-    public void onClick(View v) {
-/*        if(mShoppingListButtonListener != null) {
-            mShoppingListButtonListener.onShoppingListButtonClicked(IShoppingListButtonsListener.ShoppingListButtonType.BTN_ITEM_SELECTED, getPosition());
-        }*/
-    }
 
     public void setShoppingListTitle(String title){
         lbl_shoppingListTitle.setText(title);

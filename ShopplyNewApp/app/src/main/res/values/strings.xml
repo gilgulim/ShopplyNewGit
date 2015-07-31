@@ -18,5 +18,8 @@
     <string name="facebook_app_id">1598865660364542</string>
     <string name="title_activity_live_shopping_card_view">LiveShoppingCardView</string>
     <string name="title_activity_facebook_friends_list_view">FacebookFriendsListView</string>
+    <string name="facebook_err_share_generic">Error, Please try again</string>
+    <string name="facebook_err_share_already_exist">Already shared with this user</string>
+    <string name="facebook_share_success">Shared successfully!</string>
 
 </resources>

@@ -5,10 +5,12 @@ package com.example.shopply.shopplynewapp.dataObjects;
  */
 public class DataObjectFbFriendItem {
 
+    private String mId;
     private String mFullName;
     private String mImageUrl;
 
-    public DataObjectFbFriendItem(String fullName, String ImageUrl){
+    public DataObjectFbFriendItem(String id, String fullName, String ImageUrl){
+        mId = id;
         mFullName = fullName;
         mImageUrl = ImageUrl;
     }
@@ -19,5 +21,9 @@ public class DataObjectFbFriendItem {
 
     public String getImageUrl(){
         return mImageUrl;
+    }
+
+    public String getId(){
+        return mId;
     }
 }

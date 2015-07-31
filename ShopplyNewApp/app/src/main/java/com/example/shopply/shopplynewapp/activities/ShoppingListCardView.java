@@ -218,29 +218,25 @@ public class ShoppingListCardView extends ActionBarActivity implements IShopping
                 break;
 
             case BTN_EDIT:
-                Log.i(TAG, "BTN_EDIT " + position);
                 Intent editIntent = new Intent(ShoppingListCardView.this, ItemListCardView.class);
-                editIntent.putExtra("listObjectID", mAdapter.getObjectId(position));
+                editIntent.putExtra("listObjectID", mAdapter.getShoppingListId(position));
                 ShoppingListCardView.this.startActivity(editIntent);
                 break;
 
             case BTN_SHARE:
-                Log.i(TAG, "BTN_SHARE " + position);
-
                 Intent intent = new Intent(ShoppingListCardView.this, FacebookFriendsListView.class);
+                intent.putExtra("listId", mAdapter.getShoppingListId(position));
                 ShoppingListCardView.this.startActivity(intent);
 
                 break;
 
             case BTN_TOGGLE_BG:
-                Log.i(TAG, "BTN_TOGGLE_BG " + position);
                 toggleListBackground(position);
                 break;
 
             case BTN_ITEM_SELECTED:
-                Log.i(TAG, "BTN_ITEM_SELECTED " + position);
                 Intent shopIntent = new Intent(ShoppingListCardView.this, LiveShoppingCardView.class);
-                shopIntent.putExtra("listObjectID", mAdapter.getObjectId(position));
+                shopIntent.putExtra("listObjectID", mAdapter.getShoppingListId(position));
                 ShoppingListCardView.this.startActivity(shopIntent);
                 break;
         }
@@ -300,7 +296,7 @@ public class ShoppingListCardView extends ActionBarActivity implements IShopping
     }
 
     private void deleteShoppingList(int position) {
-        final String objectID = mAdapter.getObjectId(position);
+        final String objectID = mAdapter.getShoppingListId(position);
         mAdapter.deleteItem(position);
 
         ParseQuery<ParseObject> query = ParseQuery.getQuery("n_shoppingLists");

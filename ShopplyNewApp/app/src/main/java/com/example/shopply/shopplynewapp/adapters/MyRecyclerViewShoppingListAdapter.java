@@ -59,7 +59,7 @@ public class MyRecyclerViewShoppingListAdapter extends RecyclerView.Adapter<Shop
         mDataset.add(dataObj);
         notifyItemInserted(index);
     }
-    public String getObjectId(int index){
+    public String getShoppingListId(int index){
         return mDataset.get(index).getmId();
     }
 
