@@ -39,7 +39,7 @@ public class MyRecyclerViewLiveShoppingItemListAdapter extends RecyclerView.Adap
     private static String LOG_TAG = "MRV-LS-ItemListAdapter";
     private static ArrayList<DataObjectItem> mDataset;
     private static MyClickListener myClickListener;
-    private static final int SWIPE_DELAY_TIME = 1000;
+    private static final int SWIPE_DELAY_TIME = 500;
     private static int totalItemsCounter =0;
     private static int missingItemsCounter=0;
 
@@ -48,7 +48,6 @@ public class MyRecyclerViewLiveShoppingItemListAdapter extends RecyclerView.Adap
             .OnClickListener {
 
         RemoveItemListener removeItemListener;
-        //ImageView itemBG;
         ImageView itemColorCategory;
         TextView itemName;
         TextView itemAmount;
@@ -64,7 +63,6 @@ public class MyRecyclerViewLiveShoppingItemListAdapter extends RecyclerView.Adap
 
             itemName = (TextView) itemView.findViewById(R.id.LSItemListName);
             itemAmount = (TextView) itemView.findViewById(R.id.LSItemListAmount);
-            //itemBG = (ImageView) itemView.findViewById(R.id.LSItemListImage);
             itemColorCategory = (ImageView) itemView.findViewById(R.id.imageViewCategoryColor);
 
             swipeLayout = (SwipeLayout) itemView.findViewById(R.id.liveShoppingItemSwipeLayout);
@@ -74,12 +72,10 @@ public class MyRecyclerViewLiveShoppingItemListAdapter extends RecyclerView.Adap
             swipeLayout.addSwipeListener(new SwipeLayout.SwipeListener() {
                 @Override
                 public void onClose(SwipeLayout layout) {
-                    //when the SurfaceView totally cover the BottomView.
                 }
 
                 @Override
                 public void onUpdate(SwipeLayout layout, int leftOffset, int topOffset) {
-                    //you are swiping.
                 }
 
                 @Override
@@ -128,7 +124,6 @@ public class MyRecyclerViewLiveShoppingItemListAdapter extends RecyclerView.Adap
         }
 
         private void notifySharedFriendsForMissingItem(final int position) {
-
             final String itemId = mDataset.get(position).getmItemId();
 
             ParseQuery<ParseObject> itemQuery = ParseQuery.getQuery("n_itemsListsRelationships");
@@ -152,13 +147,6 @@ public class MyRecyclerViewLiveShoppingItemListAdapter extends RecyclerView.Adap
                     }
                 }
             });
-
-
-
-        }
-
-        private void changeItemColorCategory(int position) {
-            //todo: update item color;
         }
 
         @Override
@@ -174,6 +162,7 @@ public class MyRecyclerViewLiveShoppingItemListAdapter extends RecyclerView.Adap
     public MyRecyclerViewLiveShoppingItemListAdapter(ArrayList<DataObjectItem> myDataset) {
         mDataset = myDataset;
         totalItemsCounter = myDataset.size();
+        missingItemsCounter = 0;
     }
 
     @Override
@@ -199,16 +188,6 @@ public class MyRecyclerViewLiveShoppingItemListAdapter extends RecyclerView.Adap
 
         holder.itemAmount.setText(String.format("%d %s", mDataset.get(position).getmItemAmount(), itemType));
         holder.itemColorCategory.setBackgroundColor(Color.parseColor(mDataset.get(position).getmItemCategoryColor()));
-//        holder.itemColorCategory.setBackgroundColor(Color.parseColor(mDataset.get(position).getmItemCategoryColor()));
-
-        //support API 15 (Jellybean)
-//        int sdk = android.os.Build.VERSION.SDK_INT;
-//        if(sdk < android.os.Build.VERSION_CODES.JELLY_BEAN) {
-//            holder.itemBG.setBackgroundDrawable(mDataset.get(position).getmImageItem());
-//        } else {
-//            holder.itemBG.setBackground(mDataset.get(position).getmImageItem());
-//        }
-
     }
 
 
@@ -229,7 +208,7 @@ public class MyRecyclerViewLiveShoppingItemListAdapter extends RecyclerView.Adap
                         list.get(0).deleteInBackground(new DeleteCallback() {
                             @Override
                             public void done(ParseException e) {
-                                Log.d("Parse", "Item with id  removed from n_itemsListsRelationships table");
+                                Log.d(LOG_TAG, "Item with id  removed from n_itemsListsRelationships table");
                             }
                         });
                     }
@@ -237,10 +216,9 @@ public class MyRecyclerViewLiveShoppingItemListAdapter extends RecyclerView.Adap
                 });
 
             } catch (Exception ex) {
-                String strex = ex.toString();
+                Log.i(LOG_TAG, ex.getMessage());
             }
         }
-
 
         mDataset.remove(position);
         notifyDataSetChanged();

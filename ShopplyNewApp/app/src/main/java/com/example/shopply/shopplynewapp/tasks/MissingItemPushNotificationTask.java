@@ -14,13 +14,6 @@ import java.util.List;
 
 /**
  * Created by Evyatar on 01/08/2015.
- *
- *  Example  for using the class:
- *
- *  MissingItemPushNotificationTask missingItemPushNotificationTask = new MissingItemPushNotificationTask();
- *  missingItemPushNotificationTask.execute("Local_User_Facebook_ID", "List_ID", "MISSING_ITEM_NAME");
- *
- *
  **/
 public class MissingItemPushNotificationTask extends AsyncTask<String, Void, Void> {
     @Override

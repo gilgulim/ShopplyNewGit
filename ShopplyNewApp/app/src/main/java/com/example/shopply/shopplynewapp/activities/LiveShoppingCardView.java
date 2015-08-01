@@ -1,6 +1,5 @@
 package com.example.shopply.shopplynewapp.activities;
 
-import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Handler;
 import android.support.v7.app.ActionBarActivity;
@@ -12,7 +11,6 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.example.shopply.shopplynewapp.dataObjects.DataObjectItem;
@@ -25,17 +23,12 @@ import com.parse.ParseObject;
 import com.parse.ParseQuery;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
 
 public class LiveShoppingCardView extends ActionBarActivity {
 
-    private int itemTypeIconsIndex;
     private RecyclerView mRecyclerViewItem;
     private RecyclerView.Adapter mAdapterItem;
     private RecyclerView.LayoutManager mLayoutManagerItem;
@@ -43,7 +36,6 @@ public class LiveShoppingCardView extends ActionBarActivity {
     private String shoppingListObjectID;
     private ArrayList<DataObjectItem> results = new ArrayList<DataObjectItem>();
 
-    //private int itemIndex = 0;
     private LayoutInflater li;
     private View promptsView;
     private TextView shoppingClock;
@@ -120,7 +112,6 @@ public class LiveShoppingCardView extends ActionBarActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_live_shopping_card_view, menu);
         setTitle("");
         final ParseQuery<ParseObject> shoppingListObject = ParseQuery.getQuery("n_shoppingLists");
@@ -142,24 +133,13 @@ public class LiveShoppingCardView extends ActionBarActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-/*        if (id == R.id.action_settings) {
-            return true;
-        }*/
-
         return super.onOptionsItemSelected(item);
     }
 
     private ArrayList<DataObjectItem> getDataSet() {
-        //Drawable img1;
         li = LayoutInflater.from(this);
         promptsView = li.inflate(R.layout.new_item_dialog, null);
-        //ArrayList<ImageButton> itemTypeIcons = getItemTypeIconsImageViewArray(promptsView);
 
         final ParseQuery<ParseObject> shoppingListObject = ParseQuery.getQuery("n_shoppingLists");
         shoppingListObject.whereEqualTo("objectId", shoppingListObjectID);
@@ -182,6 +162,7 @@ public class LiveShoppingCardView extends ActionBarActivity {
                     for (ParseObject itemObject : listOfRelationships){
                         ParseObject itemRelationshipObject = itemObject.getParseObject("itemID");
                         Log.i(TAG, "object ID = " + itemObject.getObjectId() + ", listID = " + itemRelationshipObject.getObjectId());
+
                         ParseQuery<ParseObject> itemQuery = new ParseQuery("n_items");
                         itemQuery.whereEqualTo("objectId", itemRelationshipObject.getObjectId());
 
@@ -190,11 +171,10 @@ public class LiveShoppingCardView extends ActionBarActivity {
                         if(listOfItems.size() > 0 ){
                             String itemName = listOfItems.get(0).getString("itemName");
                             int itemQty = listOfItems.get(0).getInt("itemQty");
-                            //int itemTypeIndex = listOfItems.get(0).getInt("itemTypeIndex");
                             String itemCategoryColor = listOfItems.get(0).getString("itemCategoryColor");
                             String itemQtyType = listOfItems.get(0).getString("itemQtyType");
-                            //img1 = itemTypeIcons.get(itemTypeIndex).getDrawable();
                             DataObjectItem item = new DataObjectItem(itemObject.getObjectId(), itemName, itemCategoryColor, itemQty , (itemQtyType.equals("QTY") ? 0 : 1));
+
                             tempList.add(item);
                         }
                     }

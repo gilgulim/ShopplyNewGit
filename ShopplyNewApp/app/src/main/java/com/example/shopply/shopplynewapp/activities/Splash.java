@@ -38,21 +38,15 @@ public class Splash extends Activity {
         Parse.initialize(this, "E8FFzEd5jte9M3G6gkyNCUWMqXMGfWAScQwQDwsb", "5k4kUjotQY2qffgg3R8sublHlAVkWlkFWwujNU1I");
         ParseFacebookUtils.initialize(this);
 
-        //PushService.setDefaultPushCallback(this, Splash.class);
-
-        /* New Handler to start the Menu-Activity 
-         * and close this Splash-Screen after some seconds.*/
         new Handler().postDelayed(new Runnable(){
             @Override
             public void run() {
-                /* Create an Intent that will start the Menu-Activity. */
                 Intent loginIntent = new Intent(Splash.this,Login.class);
                 Splash.this.startActivity(loginIntent);
-                //Splash.this.finish();
             }
         }, SPLASH_DISPLAY_LENGTH);
 
-////Facebook HASH KEY generator
+//Facebook HASH KEY generator
 //        PackageInfo info;
 //        try {
 //            info = getPackageManager().getPackageInfo("com.you.name", PackageManager.GET_SIGNATURES);

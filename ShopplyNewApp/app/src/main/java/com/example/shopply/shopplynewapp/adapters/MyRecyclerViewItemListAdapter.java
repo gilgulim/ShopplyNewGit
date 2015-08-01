@@ -44,7 +44,6 @@ public class MyRecyclerViewItemListAdapter extends RecyclerView.Adapter<MyRecycl
             .OnClickListener {
         ChangeItemColorListener changeItemColorListener;
         RemoveItemListener removeItemListener;
-        //ImageView itemBG;
         ImageView itemCategoryColor;
         TextView itemName;
         TextView itemAmount;
@@ -58,7 +57,6 @@ public class MyRecyclerViewItemListAdapter extends RecyclerView.Adapter<MyRecycl
 
             itemName = (TextView) itemView.findViewById(R.id.ItemListName);
             itemAmount = (TextView) itemView.findViewById(R.id.ItemListAmount);
-            //itemBG = (ImageView) itemView.findViewById(R.id.ItemListImage);
             itemCategoryColor = (ImageView) itemView.findViewById(R.id.imageViewCategoryColor);
             swipeLayout = (SwipeLayout) itemView.findViewById(R.id.Item_SwipeLayout);
 
@@ -68,12 +66,10 @@ public class MyRecyclerViewItemListAdapter extends RecyclerView.Adapter<MyRecycl
             swipeLayout.addSwipeListener(new SwipeLayout.SwipeListener() {
                 @Override
                 public void onClose(SwipeLayout layout) {
-                    //when the SurfaceView totally cover the BottomView.
                 }
 
                 @Override
                 public void onUpdate(SwipeLayout layout, int leftOffset, int topOffset) {
-                    //you are swiping.
                 }
 
                 @Override
@@ -152,9 +148,6 @@ public class MyRecyclerViewItemListAdapter extends RecyclerView.Adapter<MyRecycl
                 imageButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        //Toast.makeText(view.getContext().getApplicationContext(),"arr i=" +colors.indexOf(imageButton) + ",pos=" + getPosition(),Toast.LENGTH_SHORT).show();
-
-
                         ParseObject point = ParseObject.createWithoutData("n_items", mDataset.get(position).getmItemId());
                         final int categoryColor =((ColorDrawable)imageButton.getBackground()).getColor();
                         point.put("itemCategoryColor", String.format("#%06X", (0xFFFFFF & categoryColor)));
@@ -223,15 +216,6 @@ public class MyRecyclerViewItemListAdapter extends RecyclerView.Adapter<MyRecycl
 
         holder.itemAmount.setText(String.format("%d %s", mDataset.get(position).getmItemAmount(), itemType));
         holder.itemCategoryColor.setBackgroundColor(Color.parseColor(mDataset.get(position).getmItemCategoryColor()));
-/*
-        //support API 15 (Jellybean)
-        int sdk = android.os.Build.VERSION.SDK_INT;
-        if(sdk < android.os.Build.VERSION_CODES.JELLY_BEAN) {
-            holder.itemBG.setBackgroundDrawable(mDataset.get(position).getmImageItem());
-        } else {
-            holder.itemBG.setBackground(mDataset.get(position).getmImageItem());
-        }
- */
     }
 
 
@@ -239,31 +223,29 @@ public class MyRecyclerViewItemListAdapter extends RecyclerView.Adapter<MyRecycl
     public void onItemRemove(View itemView, int position) {
         DataObjectItem dataObjectItem = mDataset.get(position);
         if(dataObjectItem != null) {
-
-            String relationshipId = dataObjectItem.getmItemsListRelationShipId();
-
+            String relationshipId = dataObjectItem.getmItemId();
             ParseQuery<ParseObject> query = new ParseQuery("n_itemsListsRelationships");
             query.whereEqualTo("objectId", relationshipId);
-            try {
-                query.findInBackground(new FindCallback<ParseObject>() {
-                    @Override
-                    public void done(List<ParseObject> list, ParseException e) {
-                    if(list.size() > 0){
-                        list.get(0).deleteInBackground(new DeleteCallback() {
-                            @Override
-                            public void done(ParseException e) {
-                                Log.d("Parse", "Item with id  removed from n_itemsListsRelationships table");
-                            }
-                        });
+            query.findInBackground(new FindCallback<ParseObject>() {
+                @Override
+                public void done(List<ParseObject> list, ParseException e) {
+                    if(e == null){
+                        if(list.size() > 0){
+                            list.get(0).deleteInBackground(new DeleteCallback() {
+                                @Override
+                                public void done(ParseException e) {
+                                    Log.i(LOG_TAG, "Item removed from n_itemsListsRelationships table");
+                                }
+                            });
+                        }else{
+                            Log.i(LOG_TAG, "list = 0");
+                        }
+                    }else{
+                        Log.i(LOG_TAG, "find query failed e=" + e.getMessage());
                     }
-                    }
-                });
-
-            } catch (Exception ex) {
-                String strex = ex.toString();
-            }
+                }
+            });
         }
-
 
         mDataset.remove(position);
         notifyDataSetChanged();
@@ -274,8 +256,6 @@ public class MyRecyclerViewItemListAdapter extends RecyclerView.Adapter<MyRecycl
         mDataset.add(dataObj);
         notifyDataSetChanged();
     }
-
-
 
     @Override
     public int getItemCount() {
