@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.example.shopply.shopplynewapp.R;
+import com.example.shopply.shopplynewapp.tasks.MissingItemPushNotificationTask;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
@@ -165,7 +166,6 @@ public class Login extends Activity implements FacebookCallback<LoginResult> {
                             }
                         }
                     });
-
 
                     Intent mainIntent = new Intent(Login.this, ShoppingListCardView.class);
                     Login.this.startActivity(mainIntent);

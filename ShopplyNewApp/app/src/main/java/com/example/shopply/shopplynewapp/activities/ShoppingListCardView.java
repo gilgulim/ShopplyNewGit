@@ -154,7 +154,12 @@ public class ShoppingListCardView extends ActionBarActivity implements IShopping
                                             String shoppingListName = list.get(0).getString("shoppingListName");
                                             String bgName = list.get(0).getString("bgName");
 
-                                            Drawable img = res.getDrawable(getResources().getIdentifier(bgName, "drawable", getPackageName()));
+                                            Drawable img = null;
+                                            if (bgName != null) {
+                                                img = res.getDrawable(getResources().getIdentifier(bgName, "drawable", getPackageName()));
+                                            } else {
+                                                img = res.getDrawable(getResources().getIdentifier("list_bg_memo", "drawable", getPackageName()));
+                                            }
                                             DataObjectShoppingList shoppingListItem = new DataObjectShoppingList(list.get(0).getObjectId(), shoppingListName, img);
                                             results.add(itemIndex++, shoppingListItem);
                                             mAdapter.notifyDataSetChanged();
