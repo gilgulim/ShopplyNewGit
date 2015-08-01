@@ -70,6 +70,7 @@ public class FacebookFriendsListView extends ActionBarActivity implements FbFrie
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_facebook_friends_list_view, menu);
+        this.setTitle("Select friends");
         return true;
     }
 
