@@ -21,6 +21,7 @@ import com.example.shopply.shopplynewapp.R;
 import com.example.shopply.shopplynewapp.adapters.FbFriendSelectedListener;
 import com.example.shopply.shopplynewapp.adapters.MyRecyclerViewFbListAdapter;
 import com.example.shopply.shopplynewapp.dataObjects.DataObjectFbFriendItem;
+import com.example.shopply.shopplynewapp.tasks.ShareListPushNotificationTask;
 import com.facebook.AccessToken;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
@@ -158,6 +159,10 @@ public class FacebookFriendsListView extends ActionBarActivity implements FbFrie
                         resultMessage = getString(R.string.facebook_err_share_generic);
                     }
                 }else {
+
+                    ShareListPushNotificationTask shareListPushNotificationTask = new ShareListPushNotificationTask();
+                    shareListPushNotificationTask.execute(fbId);
+
                     resultMessage = getString(R.string.facebook_share_success);
                 }
 

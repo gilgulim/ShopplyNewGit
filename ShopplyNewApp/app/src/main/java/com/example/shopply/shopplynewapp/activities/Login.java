@@ -21,8 +21,10 @@ import com.facebook.login.LoginResult;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseFacebookUtils;
+import com.parse.ParseInstallation;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
+import com.parse.SaveCallback;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -31,7 +33,7 @@ import java.util.Arrays;
 import java.util.List;
 
 
-public class Login extends Activity {
+public class Login extends Activity implements FacebookCallback<LoginResult> {
 
     private CallbackManager callbackManager;
     private com.facebook.login.widget.LoginButton btnFacebookLogin;
@@ -50,76 +52,7 @@ public class Login extends Activity {
         btnFacebookLogin.setReadPermissions(fbPermissions);
 
         callbackManager = CallbackManager.Factory.create();
-        LoginManager.getInstance().registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
-            @Override
-            public void onSuccess(LoginResult loginResult) {
-                Log.i(TAG, "onSuccess");
-
-                createAndLoginUser();
-
-                Intent mainIntent = new Intent(Login.this, ShoppingListCardView.class);
-                Login.this.startActivity(mainIntent);
-
-            }
-
-            private void createAndLoginUser() {
-                //Get the user's facebook id number
-                String profileID = Profile.getCurrentProfile().getId();
-
-                //Search for the id in Shooply DB
-                ParseQuery<ParseUser> query = ParseUser.getQuery();
-                query.whereEqualTo("FacebookUserID", profileID);
-                query.findInBackground(new FindCallback<ParseUser>() {
-                    public void done(List<ParseUser> objects, ParseException e) {
-                        if (e == null) {
-
-                            if (objects.size() == 0) {
-                                Log.i(TAG, "creating new user");
-
-                                //create new user
-                                ParseUser user = new ParseUser();
-                                user.setUsername(Profile.getCurrentProfile().getName());
-                                user.setPassword("no password");
-                                //user.setEmail("email@example.com");
-                                user.put("isFacebookUser", true);
-                                user.put("FacebookUserID", Profile.getCurrentProfile().getId());
-                                try {
-                                    user.signUp();
-                                    user.logIn(user.getUsername(), "no password");
-                                } catch (ParseException e1) {
-                                    e1.printStackTrace();
-                                }
-
-                                //
-                            } else {
-                                //user exist
-                                Log.i(TAG, "user is exist");
-
-
-                                try {
-                                    ParseUser.logIn(objects.get(0).getUsername(), "no password");
-                                } catch (ParseException e1) {
-                                    e1.printStackTrace();
-                                }
-                            }
-
-                        } else {
-                        }
-                    }
-                });
-            }
-
-            @Override
-            public void onCancel() {
-                Log.i(TAG, "onCancel");
-            }
-
-            @Override
-            public void onError(FacebookException exception) {
-                Log.i(TAG, "onError");
-            }
-        });
-
+        LoginManager.getInstance().registerCallback(callbackManager, this);
 
         TextView skipTextView = (TextView)findViewById(R.id.skipTextView);
         skipTextView.setOnClickListener(new View.OnClickListener() {
@@ -128,9 +61,16 @@ public class Login extends Activity {
                 //TODO: handle anonymous login
                 Intent mainIntent = new Intent(Login.this, ShoppingListCardView.class);
                 Login.this.startActivity(mainIntent);
-                //Login.this.finish();
             }
         });
+
+        //Check if the user is already connected
+        AccessToken accessToken = AccessToken.getCurrentAccessToken();
+        if(accessToken!=null){
+            createAndLoginUser(accessToken.getUserId());
+
+        }
+
     }
 
     @Override
@@ -154,5 +94,84 @@ public class Login extends Activity {
         super.onActivityResult(requestCode, resultCode, data);
         callbackManager.onActivityResult(requestCode, resultCode, data);
         ParseFacebookUtils.onActivityResult(requestCode, resultCode, data);
+    }
+
+    @Override
+    public void onSuccess(LoginResult loginResult) {
+
+        String userFbId =  loginResult.getAccessToken().getUserId();
+        createAndLoginUser(userFbId);
+    }
+
+    @Override
+    public void onCancel() {
+
+    }
+
+    @Override
+    public void onError(FacebookException e) {
+
+    }
+
+    private void createAndLoginUser(String userFbId) {
+
+        //Search for the id in Shooply DB
+        ParseQuery<ParseUser> query = ParseUser.getQuery();
+        query.whereEqualTo("FacebookUserID", userFbId);
+        query.findInBackground(new FindCallback<ParseUser>() {
+            public void done(List<ParseUser> objects, ParseException e) {
+                if (e == null) {
+
+                    if (objects.size() == 0) {
+                        Log.i(TAG, "creating new user");
+
+                        //create new user
+                        ParseUser user = new ParseUser();
+                        user.setUsername(Profile.getCurrentProfile().getName());
+                        user.setPassword("no password");
+                        //user.setEmail("email@example.com");
+                        user.put("isFacebookUser", true);
+                        user.put("FacebookUserID", Profile.getCurrentProfile().getId());
+                        try {
+                            user.signUp();
+                            user.logIn(user.getUsername(), "no password");
+                        } catch (ParseException e1) {
+                            e1.printStackTrace();
+                        }
+
+                        //
+                    } else {
+                        //user exist
+                        Log.i(TAG, "user is exist");
+
+
+                        try {
+                            ParseUser.logIn(objects.get(0).getUsername(), "no password");
+                        } catch (ParseException e1) {
+                            e1.printStackTrace();
+                        }
+
+
+                    }
+
+                    //Register the parse user as an identification for receiving push notifications
+                    ParseInstallation installation = ParseInstallation.getCurrentInstallation();
+                    installation.put("user", ParseUser.getCurrentUser());
+                    installation.saveInBackground(new SaveCallback() {
+                        @Override
+                        public void done(ParseException e) {
+                            if (e != null) {
+                                Log.d("com.parse.push", "Error user ParseInstallation");
+                            }
+                        }
+                    });
+
+
+                    Intent mainIntent = new Intent(Login.this, ShoppingListCardView.class);
+                    Login.this.startActivity(mainIntent);
+
+                }
+            }
+        });
     }
 }

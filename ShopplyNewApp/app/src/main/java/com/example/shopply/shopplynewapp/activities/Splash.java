@@ -4,12 +4,24 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 
 import com.example.shopply.shopplynewapp.R;
 import com.facebook.FacebookSdk;
 import com.facebook.appevents.AppEventsLogger;
+import com.parse.FindCallback;
 import com.parse.Parse;
+import com.parse.ParseException;
 import com.parse.ParseFacebookUtils;
+import com.parse.ParseInstallation;
+import com.parse.ParsePush;
+import com.parse.ParseQuery;
+import com.parse.ParseUser;
+import com.parse.PushService;
+import com.parse.SaveCallback;
+
+import java.util.List;
+import java.util.Objects;
 
 
 public class Splash extends Activity {
@@ -25,6 +37,8 @@ public class Splash extends Activity {
         Parse.enableLocalDatastore(this);
         Parse.initialize(this, "E8FFzEd5jte9M3G6gkyNCUWMqXMGfWAScQwQDwsb", "5k4kUjotQY2qffgg3R8sublHlAVkWlkFWwujNU1I");
         ParseFacebookUtils.initialize(this);
+
+        //PushService.setDefaultPushCallback(this, Splash.class);
 
         /* New Handler to start the Menu-Activity 
          * and close this Splash-Screen after some seconds.*/
