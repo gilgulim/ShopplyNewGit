@@ -302,7 +302,7 @@ public class ItemListCardView extends ActionBarActivity {
                             String itemQtyType = listOfItems.get(0).getString("itemQtyType");
                             String itemCategoryColor = listOfItems.get(0).getString("itemCategoryColor");
                             //img1 = itemTypeIcons.get(itemTypeIndex).getDrawable();
-                            DataObjectItem item = new DataObjectItem(itemObject.getObjectId(), itemName, itemCategoryColor, itemQty , (itemQtyType.equals("QTY") ? 0 : 1));
+                            DataObjectItem item = new DataObjectItem(itemId, itemName, itemCategoryColor, itemQty , (itemQtyType.equals("QTY") ? 0 : 1));
                             results.add(item);
                         }
                     }

@@ -31,17 +31,19 @@ import java.util.List;
 /**
  * Created by Gilp on 16/05/2015.
  */
-public class MyRecyclerViewItemListAdapter extends RecyclerView.Adapter<MyRecyclerViewItemListAdapter.ItemListDataObjectHolder> implements RemoveItemListener{
+public class MyRecyclerViewItemListAdapter extends RecyclerView.Adapter<MyRecyclerViewItemListAdapter.ItemListDataObjectHolder> implements RemoveItemListener, ChangeItemColorListener{
 
     private static String LOG_TAG = "MyRecyclerViewItemListAdapter";
     private static ArrayList<DataObjectItem> mDataset;
     private static MyClickListener myClickListener;
     private static final int SWIPE_DELAY_TIME = 1500;
 
+
+
     public static class ItemListDataObjectHolder extends RecyclerView.ViewHolder
             implements View
             .OnClickListener {
-
+        ChangeItemColorListener changeItemColorListener;
         RemoveItemListener removeItemListener;
         //ImageView itemBG;
         ImageView itemCategoryColor;
@@ -77,20 +79,42 @@ public class MyRecyclerViewItemListAdapter extends RecyclerView.Adapter<MyRecycl
 
                 @Override
                 public void onStartOpen(SwipeLayout layout) {
+                    String correntColor = mDataset.get(getPosition()).getmItemCategoryColor();
+                    switch (correntColor){
+                        case "#03A9F4":
+                            ((ImageButton)itemView.findViewById(R.id.imageViewColor1)).setImageResource(R.drawable.ic_checkmark);
+                            break;
+                        case "#00BCD4":
+                            ((ImageButton)itemView.findViewById(R.id.imageViewColor2)).setImageResource(R.drawable.ic_checkmark);
+                            break;
+                        case "#009688":
+                            ((ImageButton)itemView.findViewById(R.id.imageViewColor3)).setImageResource(R.drawable.ic_checkmark);
+                            break;
+                        case "#4CAF50":
+                            ((ImageButton)itemView.findViewById(R.id.imageViewColor4)).setImageResource(R.drawable.ic_checkmark);
+                            break;
+                        case "#8BC34A":
+                            ((ImageButton)itemView.findViewById(R.id.imageViewColor5)).setImageResource(R.drawable.ic_checkmark);
+                            break;
+                        case "#CDDC39":
+                            ((ImageButton)itemView.findViewById(R.id.imageViewColor6)).setImageResource(R.drawable.ic_checkmark);
+                            break;
+                    }
+
                 }
 
                 @Override
                 public void onOpen(SwipeLayout layout) {
                     Log.i("TEST", "buttom layout ID " + layout.getCurrentBottomView().getId() + " left: " + R.id.left_wrapper + " Right: " + R.id.right_wrapper);
-                    if(layout.getCurrentBottomView().getId()==R.id.left_wrapper){
-                        new Handler().postDelayed(new Runnable(){
+                    if (layout.getCurrentBottomView().getId() == R.id.left_wrapper) {
+                        new Handler().postDelayed(new Runnable() {
                             @Override
                             public void run() {
                                 removeItemListener.onItemRemove(getPosition());
-                                Toast.makeText(itemView.getContext().getApplicationContext(),"item deleted",Toast.LENGTH_SHORT).show();
+                                Toast.makeText(itemView.getContext().getApplicationContext(), "item deleted", Toast.LENGTH_SHORT).show();
                             }
                         }, SWIPE_DELAY_TIME);
-                    }else{
+                    } else {
                         changeItemColorCategory(itemView, getPosition());
                     }
 
@@ -115,7 +139,6 @@ public class MyRecyclerViewItemListAdapter extends RecyclerView.Adapter<MyRecycl
         }
 
         private void changeItemColorCategory(final View itemView, final int position) {
-            //TODO: update item color;
             final List<ImageButton> colors = new ArrayList<>();
 
             colors.add((ImageButton) itemView.findViewById(R.id.imageViewColor1));
@@ -125,38 +148,32 @@ public class MyRecyclerViewItemListAdapter extends RecyclerView.Adapter<MyRecycl
             colors.add((ImageButton) itemView.findViewById(R.id.imageViewColor5));
             colors.add((ImageButton) itemView.findViewById(R.id.imageViewColor6));
 
+            //TODO load checkbox icon :
             for(final ImageButton imageButton : colors){
                 imageButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         //Toast.makeText(view.getContext().getApplicationContext(),"arr i=" +colors.indexOf(imageButton) + ",pos=" + getPosition(),Toast.LENGTH_SHORT).show();
+
+
+                        ParseObject point = ParseObject.createWithoutData("n_items", mDataset.get(position).getmItemId());
+                        final int categoryColor =((ColorDrawable)imageButton.getBackground()).getColor();
+                        point.put("itemCategoryColor", String.format("#%06X", (0xFFFFFF & categoryColor)));
+                        point.saveInBackground(new SaveCallback() {
+                            public void done(ParseException e) {
+                                if (e == null) {
+                                    changeItemColorListener.onChangeItemColor(categoryColor, position);
+
+                                } else {
+                                    // The save failed.
+                                    Log.i("PARSE", " Save Exception" + e.getMessage());
+                                }
+                            }
+                        });
                         for(final ImageButton img : colors){
                             img.setImageResource(0);
                         }
                         imageButton.setImageResource(R.drawable.ic_checkmark);
-                        ParseQuery<ParseObject> query = ParseQuery.getQuery("n_itemsListsRelationships");
-                        Log.i("PARSE", " Object ID" + mDataset.get(position).getmItemsListRelationShipId());
-                        query.getInBackground(mDataset.get(position).getmItemsListRelationShipId(), new GetCallback<ParseObject>() {
-                            @Override
-                            public void done(ParseObject parseObject, ParseException e) {
-                                if (e == null){
-                                    int categoryColor =((ColorDrawable)imageButton.getBackground()).getColor();
-                                    String stringColor = String.format("#%06X",(0xFFFFFF & categoryColor));
-                                    parseObject.put("itemCategoryColor",stringColor);
-                                    parseObject.saveInBackground(new SaveCallback() {
-                                        @Override
-                                        public void done(ParseException e) {
-                                            if (e != null) {
-                                                Log.i("PARSE", " Save Exception" + e.getMessage());
-                                            }
-                                        }
-                                    });
-                                }
-                                else{
-                                    Log.i("PARSE","Get Exception" + e.getMessage());
-                                }
-                            }
-                        });
                     }
                 });
             }
@@ -177,6 +194,12 @@ public class MyRecyclerViewItemListAdapter extends RecyclerView.Adapter<MyRecycl
     }
 
     @Override
+    public void onChangeItemColor(int color, int position) {
+        mDataset.get(position).setmItemCategoryColor(String.format("#%06X", (0xFFFFFF & color)));
+        this.notifyItemChanged(position);
+    }
+
+    @Override
     public ItemListDataObjectHolder onCreateViewHolder(ViewGroup parent,
                                                int viewType) {
         View view = LayoutInflater.from(parent.getContext())
@@ -190,6 +213,7 @@ public class MyRecyclerViewItemListAdapter extends RecyclerView.Adapter<MyRecycl
     public void onBindViewHolder(ItemListDataObjectHolder holder, int position) {
         holder.itemName.setText(mDataset.get(position).getmItemName());
         holder.removeItemListener = this;
+        holder.changeItemColorListener = this;
 
         String itemType;
         if(mDataset.get(position).getmItemType()==0){

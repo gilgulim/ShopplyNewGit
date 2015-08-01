@@ -193,6 +193,7 @@ public class LiveShoppingCardView extends ActionBarActivity {
         return results;
     }
 
+/*
     private ArrayList<ImageButton> getItemTypeIconsImageViewArray(View promptsView) {
         ArrayList<ImageButton> itemTypeIcons = new ArrayList<ImageButton>();
         itemTypeIcons.add((ImageButton) promptsView.findViewById(R.id.imageButtonApple));
@@ -236,4 +237,6 @@ public class LiveShoppingCardView extends ActionBarActivity {
 
         return itemTypeIcons;
     }
+*/
+
 }
