@@ -283,6 +283,7 @@ public class ItemListCardView extends ActionBarActivity {
                 ParseQuery<ParseObject> query = new ParseQuery("n_itemsListsRelationships");
                 query.whereEqualTo("listID", listOfShoppingListObjects.get(0));
                 query.include("itemID");
+
                 List<ParseObject> listOfRelationships = query.find();
                 if (listOfRelationships.size() > 0){
                     for (ParseObject itemObject : listOfRelationships){

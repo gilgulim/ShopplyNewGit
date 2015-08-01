@@ -157,6 +157,7 @@ public class MyRecyclerViewLiveShoppingItemListAdapter extends RecyclerView.Adap
 
         holder.itemAmount.setText(String.format("%d %s", mDataset.get(position).getmItemAmount(), itemType));
         holder.itemColorCategory.setBackgroundColor(Color.parseColor(mDataset.get(position).getmItemCategoryColor()));
+//        holder.itemColorCategory.setBackgroundColor(Color.parseColor(mDataset.get(position).getmItemCategoryColor()));
 
         //support API 15 (Jellybean)
 //        int sdk = android.os.Build.VERSION.SDK_INT;
