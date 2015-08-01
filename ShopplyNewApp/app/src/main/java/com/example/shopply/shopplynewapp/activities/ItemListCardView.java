@@ -283,6 +283,7 @@ public class ItemListCardView extends ActionBarActivity {
                 ParseQuery<ParseObject> query = new ParseQuery("n_itemsListsRelationships");
                 query.whereEqualTo("listID", listOfShoppingListObjects.get(0));
                 query.include("itemID");
+
                 List<ParseObject> listOfRelationships = query.find();
                 if (listOfRelationships.size() > 0){
                     for (ParseObject itemObject : listOfRelationships){
@@ -302,7 +303,7 @@ public class ItemListCardView extends ActionBarActivity {
                             String itemQtyType = listOfItems.get(0).getString("itemQtyType");
                             String itemCategoryColor = listOfItems.get(0).getString("itemCategoryColor");
                             //img1 = itemTypeIcons.get(itemTypeIndex).getDrawable();
-                            DataObjectItem item = new DataObjectItem(itemObject.getObjectId(), itemName, itemCategoryColor, itemQty , (itemQtyType.equals("QTY") ? 0 : 1));
+                            DataObjectItem item = new DataObjectItem(itemId, itemName, itemCategoryColor, itemQty , (itemQtyType.equals("QTY") ? 0 : 1));
                             results.add(item);
                         }
                     }

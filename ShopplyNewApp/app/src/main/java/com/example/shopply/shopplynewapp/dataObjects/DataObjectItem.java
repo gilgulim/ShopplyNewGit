@@ -6,7 +6,7 @@ import android.media.Image;
 /**
  * Created by Gilp on 16/05/2015.
  */
-public class DataObjectItem {
+public class DataObjectItem implements Comparable<DataObjectItem>{
     private String mItemId;
     private String mItemsListRelationShipId;
     private String mItemName;
@@ -71,6 +71,13 @@ public class DataObjectItem {
 
     public String getmItemsListRelationShipId() {
         return mItemsListRelationShipId;
+    }
+
+
+
+    @Override
+    public int compareTo(DataObjectItem o) {
+        return mItemCategoryColor.compareTo(o.getmItemCategoryColor());
     }
 }
 

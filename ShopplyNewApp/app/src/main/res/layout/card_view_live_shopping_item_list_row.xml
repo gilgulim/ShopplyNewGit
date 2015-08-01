@@ -6,7 +6,7 @@
     android:layout_height="match_parent">
 
     <com.daimajia.swipe.SwipeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="match_parent" android:layout_height="80dp" android:id="@+id/liveShoppingItemSwipeLayout">
+        android:layout_width="match_parent" android:layout_height="70dp" android:id="@+id/liveShoppingItemSwipeLayout">
         <!-- Left View Start-->
         <RelativeLayout
             android:background="#F1852B"
@@ -56,14 +56,19 @@
             android:layout_gravity="center"
             android:layout_width="fill_parent"
             android:layout_height="70dp"
-            card_view:contentPadding="10dp"
             android:layout_margin="1dp"
             card_view:cardCornerRadius="0dp">
 
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
-
+                <ImageView
+                    android:layout_width="16dp"
+                    android:layout_height="match_parent"
+                    android:id="@+id/imageViewCategoryColor"
+                    android:background="#CDDC39"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true" />
                 <ImageView
                     android:layout_width="32dp"
                     android:layout_height="32dp"
@@ -89,11 +94,12 @@
                     android:layout_height="wrap_content"
                     android:textAppearance="?android:attr/textAppearanceLarge"
                     android:textStyle="normal"
-                    android:text="4 QTY"
+                    android:text="4"
                     android:paddingLeft="10dp"
                     android:layout_alignTop="@+id/LSItemListName"
                     android:layout_alignParentRight="true"
-                    android:layout_alignParentEnd="true" />
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginRight="6dp" />
 
             </RelativeLayout>
         </android.support.v7.widget.CardView>
