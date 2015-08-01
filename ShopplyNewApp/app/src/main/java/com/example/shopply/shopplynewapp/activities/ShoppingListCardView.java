@@ -41,7 +41,7 @@ public class ShoppingListCardView extends ActionBarActivity implements IShopping
     private MyRecyclerViewShoppingListAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
     private static final String  TAG = " > > > ShoppingLists:";
-    private ArrayList results = new ArrayList<DataObjectShoppingList>();
+    private ArrayList<DataObjectShoppingList> results = new ArrayList<DataObjectShoppingList>();
     private int itemIndex = 0;
     private int listBgIndex=1;
     private static final int MAX_LIST_BG_INDEX = 5;
@@ -127,9 +127,8 @@ public class ShoppingListCardView extends ActionBarActivity implements IShopping
     }
 
     private ArrayList<DataObjectShoppingList> getDataSet() {
-        final Drawable img1;
-        Resources res = getResources();
-        img1 = res.getDrawable(R.drawable.list_bg_supermarket);
+        final Resources res = getResources();
+
 
         ParseQuery<ParseObject> query = new ParseQuery("n_usersListsRelationships");
         query.whereEqualTo("userID", ParseUser.getCurrentUser());
@@ -153,7 +152,10 @@ public class ShoppingListCardView extends ActionBarActivity implements IShopping
                                     if (e == null) {
                                         if (list.size() > 0) {
                                             String shoppingListName = list.get(0).getString("shoppingListName");
-                                            DataObjectShoppingList shoppingListItem = new DataObjectShoppingList(list.get(0).getObjectId(), shoppingListName, img1);
+                                            String bgName = list.get(0).getString("bgName");
+
+                                            Drawable img = res.getDrawable(getResources().getIdentifier(bgName, "drawable", getPackageName()));
+                                            DataObjectShoppingList shoppingListItem = new DataObjectShoppingList(list.get(0).getObjectId(), shoppingListName, img);
                                             results.add(itemIndex++, shoppingListItem);
                                             mAdapter.notifyDataSetChanged();
                                         }
@@ -180,6 +182,7 @@ public class ShoppingListCardView extends ActionBarActivity implements IShopping
         final ParseObject shoppingList = new ParseObject("n_shoppingLists");
         shoppingList.put("shoppingListName", name);
         shoppingList.put("shoppingListIsDeleted", false);
+        shoppingList.put("bgName","list_bg_supermarket");
 
         final ParseObject userShoppingListRelationship = new ParseObject("n_usersListsRelationships");
         userShoppingListRelationship.put("listID", shoppingList);
@@ -249,24 +252,46 @@ public class ShoppingListCardView extends ActionBarActivity implements IShopping
 
         Drawable bg;
         Resources res = getResources();
+        String bgName;
         switch(listBgIndex++){
             case 0:
                 bg = res.getDrawable(R.drawable.list_bg_supermarket);
+                bgName = "list_bg_supermarket";
                 break;
             case 1:
                 bg = res.getDrawable(R.drawable.list_bg_pharmacy);
+                bgName = "list_bg_pharmacy";
                 break;
             case 2:
                 bg = res.getDrawable(R.drawable.list_bg_meat);
+                bgName = "list_bg_meat";
                 break;
             case 3:
                 bg = res.getDrawable(R.drawable.list_bg_memo);
+                bgName = "list_bg_memo";
+                break;
+            case 4:
+                bg = res.getDrawable(R.drawable.list_bg_simple);
+                bgName = "list_bg_simple";
                 break;
             default:
                 bg = res.getDrawable(R.drawable.list_bg_simple);
+                bgName = "list_bg_simple";
                 break;
         }
         ((MyRecyclerViewShoppingListAdapter) mAdapter).changeItemBackground(bg, position);
+        ParseObject point = ParseObject.createWithoutData("n_shoppingLists", results.get(position).getmId());
+        point.put("bgName", bgName);
+
+        point.saveInBackground(new SaveCallback() {
+            public void done(ParseException e) {
+                if (e == null) {
+                    // Saved successfully.
+                } else {
+                    // The save failed.
+                }
+            }
+        });
     }
 
     private void fireDeleteShoppingListDialog(final int position) {
