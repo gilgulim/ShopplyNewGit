@@ -80,7 +80,8 @@
         </activity>
         <activity
             android:name=".activities.FacebookFriendsListView"
-            android:label="@string/title_activity_facebook_friends_list_view" >
+            android:label="@string/title_activity_facebook_friends_list_view"
+            android:theme="@style/MyActionBar">
         </activity>
     </application>
 
