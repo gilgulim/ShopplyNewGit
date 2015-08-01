@@ -2,6 +2,7 @@ package com.example.shopply.shopplynewapp.activities;
 
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.os.Handler;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -46,9 +47,31 @@ public class LiveShoppingCardView extends ActionBarActivity {
     private LayoutInflater li;
     private View promptsView;
     private TextView shoppingClock;
-    private int hh=0,mm=0;
+    private long startTime = 0;
+    private Handler timerHandler = new Handler();
+    private Runnable timerRunnable = new Runnable() {
+        @Override
+        public void run() {
+            String timeText;
+            long millis = System.currentTimeMillis() - startTime;
+            int seconds = (int) (millis / 1000);
+            int minutes = seconds / 60;
+            int hours = minutes / 60;
+            seconds = seconds % 60;
 
-    @Override
+            timeText = hours + ":" + (minutes < 10 ? "0":"") + minutes + ":" + (seconds < 10 ? "0":"") + seconds;
+            shoppingClock.setText(timeText);
+
+            timerHandler.postDelayed(this, 500);
+        }
+    };
+    public void stopTimer(){
+        timerHandler.removeCallbacks(timerRunnable);
+    }
+    public String getShippingClockText(){
+        return shoppingClock.getText().toString();
+    }
+        @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_live_shopping_card_view);
@@ -75,35 +98,11 @@ public class LiveShoppingCardView extends ActionBarActivity {
     }
 
     private void startClockThread() {
-        Thread t = new Thread() {
-            @Override
-        public void run(){
-                try {
-                    while (!isInterrupted()) {
-                        Thread.sleep(1000);
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                if(hh > 99){
-                                    hh=0;
-                                }
-                                if(mm > 59){
-                                    mm=0;
-                                    hh++;
-                                }
-                                shoppingClock.setText((hh < 10 ? "0" + hh : hh) + ":" +
-                                        (mm < 10 ? "0" + mm : mm));
-                                Log.i(TAG,(hh < 10 ? "0" + hh : hh) + ":" +
-                                        (mm < 10 ? "0" + mm : mm));
-                            }
-                        });
-                    }
-                } catch (InterruptedException e) {
-                    Log.i(TAG,"clock failed, e=" + e.getMessage());
-                }
-            }
-        };
+        startTime = System.currentTimeMillis();
+        timerHandler.postDelayed(timerRunnable, 0);
+
     }
+
 
     @Override
     protected void onResume() {

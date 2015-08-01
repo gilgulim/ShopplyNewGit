@@ -101,8 +101,9 @@ public class MyRecyclerViewLiveShoppingItemListAdapter extends RecyclerView.Adap
                             } else {
                                 //added to cart
                                 Toast.makeText(itemView.getContext().getApplicationContext(), "Added to Cart", Toast.LENGTH_SHORT).show();
+                                removeItemListener.onItemRemove(itemView, getPosition());
                             }
-                            removeItemListener.onItemRemove(itemView, getPosition());
+
                         }
                     }, SWIPE_DELAY_TIME);
 
@@ -142,6 +143,7 @@ public class MyRecyclerViewLiveShoppingItemListAdapter extends RecyclerView.Adap
 
                             MissingItemPushNotificationTask missingItemPushNotificationTask = new MissingItemPushNotificationTask();
                             missingItemPushNotificationTask.execute(ParseUser.getCurrentUser().getString("FacebookUserID"), listId, mDataset.get(position).getmItemName());
+                            removeItemListener.onItemRemove(itemView, getPosition());
                         }else{
                             Log.i(LOG_TAG,"itemSize == 0");
                         }
@@ -252,7 +254,8 @@ public class MyRecyclerViewLiveShoppingItemListAdapter extends RecyclerView.Adap
         View promptsView = li.inflate(R.layout.live_shopping_summary, null);
 
         TextView totalTime = (TextView)promptsView.findViewById(R.id.textViewTime);
-        totalTime.setText("99:22:25");
+        ((LiveShoppingCardView)view.getContext()).stopTimer();
+        totalTime.setText(((LiveShoppingCardView)view.getContext()).getShippingClockText());
 
         TextView totalItems = (TextView)promptsView.findViewById(R.id.textViewTotalItems);
         totalItems.setText(""+totalItemsCounter);
