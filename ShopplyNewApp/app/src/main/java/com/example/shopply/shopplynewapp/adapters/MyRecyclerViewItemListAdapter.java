@@ -19,7 +19,6 @@ import com.example.shopply.shopplynewapp.dataObjects.DataObjectItem;
 import com.example.shopply.shopplynewapp.R;
 import com.parse.DeleteCallback;
 import com.parse.FindCallback;
-import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
@@ -110,7 +109,7 @@ public class MyRecyclerViewItemListAdapter extends RecyclerView.Adapter<MyRecycl
                         new Handler().postDelayed(new Runnable() {
                             @Override
                             public void run() {
-                                removeItemListener.onItemRemove(getPosition());
+                                removeItemListener.onItemRemove(itemView, getPosition());
                                 Toast.makeText(itemView.getContext().getApplicationContext(), "item deleted", Toast.LENGTH_SHORT).show();
                             }
                         }, SWIPE_DELAY_TIME);
@@ -237,7 +236,7 @@ public class MyRecyclerViewItemListAdapter extends RecyclerView.Adapter<MyRecycl
 
 
     @Override
-    public void onItemRemove(int position) {
+    public void onItemRemove(View itemView, int position) {
         DataObjectItem dataObjectItem = mDataset.get(position);
         if(dataObjectItem != null) {
 

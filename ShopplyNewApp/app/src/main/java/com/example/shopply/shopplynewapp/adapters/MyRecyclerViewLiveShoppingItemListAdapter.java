@@ -1,6 +1,9 @@
 package com.example.shopply.shopplynewapp.adapters;
 
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Handler;
 import android.support.v7.widget.RecyclerView;
@@ -13,12 +16,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.daimajia.swipe.SwipeLayout;
+import com.example.shopply.shopplynewapp.activities.LiveShoppingCardView;
+import com.example.shopply.shopplynewapp.activities.ShoppingListCardView;
 import com.example.shopply.shopplynewapp.dataObjects.DataObjectItem;
 import com.example.shopply.shopplynewapp.R;
 import com.example.shopply.shopplynewapp.tasks.MissingItemPushNotificationTask;
 import com.parse.DeleteCallback;
 import com.parse.FindCallback;
-import com.parse.Parse;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
@@ -35,7 +39,9 @@ public class MyRecyclerViewLiveShoppingItemListAdapter extends RecyclerView.Adap
     private static String LOG_TAG = "MRV-LS-ItemListAdapter";
     private static ArrayList<DataObjectItem> mDataset;
     private static MyClickListener myClickListener;
-    private static final int SWIPE_DELAY_TIME = 1500;
+    private static final int SWIPE_DELAY_TIME = 1000;
+    private static int totalItemsCounter =0;
+    private static int missingItemsCounter=0;
 
     public static class DataObjectHolder extends RecyclerView.ViewHolder
             implements View
@@ -89,13 +95,14 @@ public class MyRecyclerViewLiveShoppingItemListAdapter extends RecyclerView.Adap
                         public void run() {
                             if (layout.getCurrentBottomView().getId() == R.id.live_shopping_left_wrapper) {
                                 //missing item
+                                missingItemsCounter++;
                                 Toast.makeText(itemView.getContext().getApplicationContext(), "Missing item", Toast.LENGTH_SHORT).show();
                                 notifySharedFriendsForMissingItem(getPosition());
                             } else {
                                 //added to cart
                                 Toast.makeText(itemView.getContext().getApplicationContext(), "Added to Cart", Toast.LENGTH_SHORT).show();
                             }
-                            removeItemListener.onItemRemove(getPosition());
+                            removeItemListener.onItemRemove(itemView, getPosition());
                         }
                     }, SWIPE_DELAY_TIME);
 
@@ -164,6 +171,7 @@ public class MyRecyclerViewLiveShoppingItemListAdapter extends RecyclerView.Adap
 
     public MyRecyclerViewLiveShoppingItemListAdapter(ArrayList<DataObjectItem> myDataset) {
         mDataset = myDataset;
+        totalItemsCounter = myDataset.size();
     }
 
     @Override
@@ -203,7 +211,7 @@ public class MyRecyclerViewLiveShoppingItemListAdapter extends RecyclerView.Adap
 
 
     @Override
-    public void onItemRemove(int position) {
+    public void onItemRemove(View itemView, int position) {
         DataObjectItem dataObjectItem = mDataset.get(position);
         if(dataObjectItem != null) {
 
@@ -234,7 +242,38 @@ public class MyRecyclerViewLiveShoppingItemListAdapter extends RecyclerView.Adap
 
         mDataset.remove(position);
         notifyDataSetChanged();
+        if(mDataset.isEmpty()){
+            displayFinishShoppingScreen(itemView);
+        }
+    }
 
+    private void displayFinishShoppingScreen(final View view) {
+        LayoutInflater li = LayoutInflater.from(view.getContext());
+        View promptsView = li.inflate(R.layout.live_shopping_summary, null);
+
+        TextView totalTime = (TextView)promptsView.findViewById(R.id.textViewTime);
+        totalTime.setText("99:22:25");
+
+        TextView totalItems = (TextView)promptsView.findViewById(R.id.textViewTotalItems);
+        totalItems.setText(""+totalItemsCounter);
+
+        TextView missingItems = (TextView)promptsView.findViewById(R.id.textViewMissingItems);
+        missingItems.setText(""+missingItemsCounter);
+
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(view.getContext());
+        alertDialogBuilder.setView(promptsView);
+
+        // set dialog message
+        alertDialogBuilder.setCancelable(false).setPositiveButton("OK",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        Intent mainIntent = new Intent(view.getContext(), ShoppingListCardView.class);
+                        view.getContext().startActivity(mainIntent);
+                    }
+                });
+        // create and show alert dialog
+        AlertDialog alertDialog = alertDialogBuilder.create();
+        alertDialog.show();
     }
 
     public void addItem(DataObjectItem dataObj, int index) {

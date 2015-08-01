@@ -1,6 +1,5 @@
 package com.example.shopply.shopplynewapp.adapters;
 
-import android.content.DialogInterface;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -88,7 +87,7 @@ public class MyRecyclerViewFbListAdapter extends RecyclerView.Adapter<MyRecycler
     }
 
     @Override
-    public void onItemRemove(int position) {
+    public void onItemRemove(View itemView, int position) {
 
     }
 }

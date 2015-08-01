@@ -7,5 +7,5 @@ import android.view.View;
  */
 public interface RemoveItemListener {
 
-    void onItemRemove(int position);
+    void onItemRemove(View itemView, int position);
 }

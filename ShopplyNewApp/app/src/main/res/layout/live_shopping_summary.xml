@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent" android:layout_height="fill_parent" android:orientation="vertical" android:padding="10dp" >
+
+    <TextView
+        android:id="@+id/summaryTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Done Shopping!"
+        android:layout_marginBottom="6dp"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+        <requestFocus />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Total time:"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:layout_below="@+id/summaryTitle"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginBottom="6dp"
+        android:id="@+id/textView" />
+    <TextView
+        android:id="@+id/textViewTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="01:25:22"
+        android:textStyle="bold"
+        android:layout_below="@+id/summaryTitle"
+        android:layout_alignLeft="@+id/textViewTotalItems"
+        android:layout_alignStart="@+id/textViewTotalItems" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Total items:"
+        android:layout_below="@+id/textView"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginBottom="6dp"
+        android:id="@+id/textView2" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="24"
+        android:textStyle="bold"
+        android:layout_alignTop="@+id/textView2"
+        android:layout_alignRight="@+id/summaryTitle"
+        android:layout_alignEnd="@+id/summaryTitle"
+        android:id="@+id/textViewTotalItems" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Missing items:"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:layout_below="@+id/textView2"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:id="@+id/textView3" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="0"
+        android:textStyle="bold"
+        android:id="@+id/textViewMissingItems"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:layout_alignBaseline="@+id/textView3"
+        android:layout_alignBottom="@+id/textView3"
+        android:layout_alignLeft="@+id/textViewTotalItems"
+        android:layout_alignStart="@+id/textViewTotalItems" />
+    <requestFocus />
+
+
+</RelativeLayout>
