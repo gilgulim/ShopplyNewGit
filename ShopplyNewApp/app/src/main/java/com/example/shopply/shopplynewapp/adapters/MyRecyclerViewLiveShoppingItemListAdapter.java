@@ -15,11 +15,14 @@ import android.widget.Toast;
 import com.daimajia.swipe.SwipeLayout;
 import com.example.shopply.shopplynewapp.dataObjects.DataObjectItem;
 import com.example.shopply.shopplynewapp.R;
+import com.example.shopply.shopplynewapp.tasks.MissingItemPushNotificationTask;
 import com.parse.DeleteCallback;
 import com.parse.FindCallback;
+import com.parse.Parse;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
+import com.parse.ParseUser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -81,20 +84,20 @@ public class MyRecyclerViewLiveShoppingItemListAdapter extends RecyclerView.Adap
                 public void onOpen(final SwipeLayout layout) {
                     Log.i("TEST", "buttom layout ID " + layout.getCurrentBottomView().getId() + " left: " + R.id.live_shopping_left_wrapper + " Right: " + R.id.live_shopping_right_wrapper);
 
-                    new Handler().postDelayed(new Runnable(){
+                    new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
-                            if(layout.getCurrentBottomView().getId()==R.id.live_shopping_left_wrapper){
-                                //removeItemListener.onItemRemove(getPosition());
-                                //TODO:remove from list and add to other/default list
-                                Toast.makeText(itemView.getContext().getApplicationContext(),"Missing",Toast.LENGTH_SHORT).show();
-                            }else{
-                                //TODO:remove from list.
-                                Toast.makeText(itemView.getContext().getApplicationContext(),"Added to Cart",Toast.LENGTH_SHORT).show();
+                            if (layout.getCurrentBottomView().getId() == R.id.live_shopping_left_wrapper) {
+                                //missing item
+                                Toast.makeText(itemView.getContext().getApplicationContext(), "Missing item", Toast.LENGTH_SHORT).show();
+                                notifySharedFriendsForMissingItem(getPosition());
+                            } else {
+                                //added to cart
+                                Toast.makeText(itemView.getContext().getApplicationContext(), "Added to Cart", Toast.LENGTH_SHORT).show();
                             }
+                            removeItemListener.onItemRemove(getPosition());
                         }
                     }, SWIPE_DELAY_TIME);
-
 
 
                 }
@@ -114,6 +117,35 @@ public class MyRecyclerViewLiveShoppingItemListAdapter extends RecyclerView.Adap
 
             Log.i(LOG_TAG, "Adding Listener");
             itemView.setOnClickListener(this);
+        }
+
+        private void notifySharedFriendsForMissingItem(final int position) {
+
+            final String itemId = mDataset.get(position).getmItemId();
+
+            ParseQuery<ParseObject> itemQuery = ParseQuery.getQuery("n_itemsListsRelationships");
+            itemQuery.whereEqualTo("objectId", itemId);
+            itemQuery.findInBackground(new FindCallback<ParseObject>() {
+                @Override
+                public void done(List<ParseObject> list, ParseException e) {
+                    if (e == null) {
+                        if (list.size() > 0) {
+                            ParseObject itemListObject = list.get(0).getParseObject("listID");
+                            String listId = itemListObject.getObjectId();
+
+                            MissingItemPushNotificationTask missingItemPushNotificationTask = new MissingItemPushNotificationTask();
+                            missingItemPushNotificationTask.execute(ParseUser.getCurrentUser().getString("FacebookUserID"), listId, mDataset.get(position).getmItemName());
+                        }else{
+                            Log.i(LOG_TAG,"itemSize == 0");
+                        }
+                    } else {
+                        Log.i(LOG_TAG,"itemQuery failed. e = " + e.getMessage());
+                    }
+                }
+            });
+
+
+
         }
 
         private void changeItemColorCategory(int position) {

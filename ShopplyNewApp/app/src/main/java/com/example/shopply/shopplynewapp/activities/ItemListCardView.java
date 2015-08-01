@@ -269,7 +269,7 @@ public class ItemListCardView extends ActionBarActivity {
         AppEventsLogger.activateApp(this);
     }
 
-    private ArrayList<DataObjectItem> getDataSet() {
+    private ArrayList<DataObjectItem>   getDataSet() {
         //Drawable img1;
         li = LayoutInflater.from(this);
         promptsView = li.inflate(R.layout.new_item_dialog, null);
